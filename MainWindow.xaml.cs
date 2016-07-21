@@ -44,6 +44,9 @@ namespace Demo4
         // 点图层
         private Layer3D m_pointLayer = null;
 
+        private Point3Ds m_point3Ds = new Point3Ds();
+        private Point3D m_temPoint = Point3D.Empty;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -52,12 +55,12 @@ namespace Demo4
 
             createDataset();
 
-            //results.Add("the first data!");
 
             // 搜索结果数据绑定
             this.searchResult.ItemsSource = results;
 
-            //TestSceneFly(m_sceneControl.Scene);
+            TestSceneFly(m_sceneControl.Scene);
+
         }
 
 
@@ -72,11 +75,6 @@ namespace Demo4
 
             //设置矢量数据集在三维场景中的显示风格，并进行显示
             Layer3DSettingVector layer3DSettingVector = new Layer3DSettingVector();
-            //GeoStyle3D geoStyle3D = new GeoStyle3D();
-            //geoStyle3D.MarkerColor = System.Drawing.Color.Red;
-            //geoStyle3D.AltitudeMode = AltitudeMode.Absolute;
-            //geoStyle3D.MarkerSize = 100;
-            //layer3DSettingVector.Style = geoStyle3D;
 
             m_pointLayer = m_sceneControl.Scene.Layers.Add(pointDataset,
                            layer3DSettingVector, true);
@@ -102,8 +100,132 @@ namespace Demo4
 
             // 鼠标点击事件
             m_sceneControl.MouseDown += new MouseEventHandler(m_sceneControl_MouseDown);
+            // 正在进行量算
+            m_sceneControl.Tracking += new Tracking3DEventHandler(TrackingHandler);
+            // 一次量算完成
+            m_sceneControl.Tracked += new Tracked3DEventHandler(TrackedHandler);
+            // 鼠标松开
+            m_sceneControl.MouseUp += new MouseEventHandler(m_sceneControl_MouseUp);
         }
 
+        // 鼠标松开
+        private void m_sceneControl_MouseUp(object sender, MouseEventArgs e) 
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (m_sceneControl.Action == Action3D.MeasureDistance)
+                {
+                    GeoLine3D gl = new GeoLine3D(m_point3Ds);
+                    GeoStyle3D g3d = new GeoStyle3D();
+                    g3d.AltitudeMode = AltitudeMode.Absolute;
+                    g3d.LineColor = System.Drawing.Color.Yellow;
+                    g3d.LineWidth = 2;
+                    gl.Style3D = g3d;
+                    m_sceneControl.Scene.TrackingLayer.Add(gl, "line");
+                }
+
+                EndOneMeasure();
+            }
+            else
+            {
+                Point3D p3 = m_sceneControl.Scene.PixelToGlobe(new System.Drawing.Point(e.X, e.Y),
+                                PixelToGlobeMode.TerrainAndModel);
+                m_point3Ds.Add(p3);
+            }
+        }
+
+        private void EndOneMeasure() 
+        {
+            m_point3Ds.Clear();
+            m_temPoint = Point3D.Empty;
+        }
+
+        private void TrackingHandler(object sender, Tracking3DEventArgs e) 
+        {
+            //if (e == null || e.Geometry == null) return;
+
+            if (m_sceneControl.Action == Action3D.MeasureDistance)  // 距离量算
+            {
+                double curL = e.CurrentLength;
+                this.currentResult.Text = "当前线段长" + curL + "米";
+
+                m_temPoint = new Point3D(e.X, e.Y, e.Z);
+                if (m_point3Ds.Count > 0)
+                {
+                    int i = m_sceneControl.Scene.TrackingLayer.IndexOf("curL");
+                    if (i >= 0)
+                    {
+                        m_sceneControl.Scene.TrackingLayer.Remove(i);
+                    }
+                    Point3Ds p3s = new Point3Ds();
+                    p3s.Add(m_point3Ds[m_point3Ds.Count - 1]);
+                    p3s.Add(m_temPoint);
+                    GeoLine3D gl = new GeoLine3D(p3s);
+
+                    GeoText3D text3D = CreateText3DMessage("当前线段长" + curL + "米", gl.BoundingBox.Center);
+                    m_sceneControl.Scene.TrackingLayer.Add(text3D, "curL");
+                }
+
+            }
+            else  // 面积量算
+            {
+                double curA = e.TotalArea;
+                this.currentResult.Text = "当前面积" + curA + "平方米";
+
+                if (m_point3Ds.Count > 1)
+                {
+                    int i = m_sceneControl.Scene.TrackingLayer.IndexOf("curA");
+                    if (i >= 0)
+                    {
+                        m_sceneControl.Scene.TrackingLayer.Remove(i);
+                    }
+
+                    Point3Ds p3s = new Point3Ds();
+                    p3s.Add(m_point3Ds[m_point3Ds.Count - 2]);
+                    p3s.Add(m_point3Ds[m_point3Ds.Count - 1]);
+                    p3s.Add(m_temPoint);
+                    GeoRegion3D gr = new GeoRegion3D(p3s);
+
+                    GeoText3D text3D = CreateText3DMessage("当前面积" + curA + "米", gr.BoundingBox.Center);
+                    m_sceneControl.Scene.TrackingLayer.Add(text3D, "curA");
+                }
+            }
+        }
+
+        private void TrackedHandler(object sender, Tracked3DEventArgs e) 
+        {
+            if (m_sceneControl.Action == Action3D.MeasureDistance)
+            {
+                double totL = e.Length;
+                this.totalResult.Text = "总长" + totL + "米";
+                m_sceneControl.Scene.TrackingLayer.Add(CreateText3DMessage("总长" + totL + "米", e.Geometry.Position), "totL");
+            }
+            else
+            {
+                double totA = e.Area;
+                this.totalResult.Text = "面积" + totA + "平方米";
+            }
+        }
+
+        // 创建三维文本几何对象
+        private GeoText3D CreateText3DMessage(string str, Point3D p3d)
+        {
+            TextPart3D textPart3D = new TextPart3D();
+            textPart3D.AnchorPoint = p3d;
+            textPart3D.Text = str;
+
+            TextStyle style = new TextStyle();
+            style.ForeColor = System.Drawing.Color.White;
+            style.IsSizeFixed = true;
+            style.FontHeight = 4;
+
+            GeoText3D text3D = new GeoText3D(textPart3D, style);
+            GeoStyle3D geoStyle3D = new GeoStyle3D();
+            geoStyle3D.AltitudeMode = AltitudeMode.RelativeToGround;
+            text3D.Style3D = geoStyle3D;
+
+            return text3D;
+        }
 
         private void Window_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -134,28 +256,32 @@ namespace Demo4
 
         private void bubbleShow(Point3D p3)
         {
-
             m_sceneControl.Bubbles.Clear();
             m_wpfBubbleControl = new WPFBubbleControl();
 
+            Point3D np3 = new Point3D(p3.X, p3.Y, m_sceneControl.Scene.GetHeight(p3.X, p3.Y));
+            m_wpfBubbleControl.x_position.Text = ((float)(np3.X)).ToString();
+            m_wpfBubbleControl.y_position.Text = ((float)(np3.Y)).ToString();
+            m_wpfBubbleControl.z_position.Text = ((float)(np3.Z)).ToString();
+
             m_bubbleControl = new ElementHost();
-            m_bubbleControl.Width = 300;
-            m_bubbleControl.Height = 300;
+            m_bubbleControl.Width = 200;
+            m_bubbleControl.Height = 200;
             m_bubbleControl.Child = m_wpfBubbleControl;
             m_sceneControl.Controls.Add(m_bubbleControl);
-
 
             Bubble bubble = new Bubble();
             m_sceneControl.Bubbles.Add(bubble);
 
-            //bubble.Title = "这是一个气泡";
+            //气泡相关设置
             bubble.BackColor = System.Drawing.Color.FromArgb(200, 255, 255, 255);
-            bubble.RoundQuality = 50;
+            bubble.RoundQuality = 0;
             bubble.ClientWidth = m_bubbleControl.Width;
             bubble.ClientHeight = m_bubbleControl.Height;
             bubble.Pointer = p3;
             m_bubbleControl.Location =
                 new System.Drawing.Point(bubble.ClientLeft, bubble.ClientTop);
+
             m_sceneControl.Scene.Refresh();
 
             // 注册气泡初始化的事件
@@ -170,8 +296,6 @@ namespace Demo4
             m_sceneControl.BubbleClose +=
                 new BubbleCloseEventHandler(m_sceneControl_BubbleClose);
 
-            //Point3D p = bubble.Pointer;
-            //System.Windows.MessageBox.Show("x:" + p.X + " y:" + p.Y + " z:" + p.Z);
         }
 
         void m_sceneControl_BubbleClose(object sender, BubbleEventArgs e)
@@ -190,6 +314,7 @@ namespace Demo4
             m_bubbleControl.Visible = true;
 
         }
+
         void m_sceneControl_BubbleInitialize(object sender, BubbleEventArgs e)
         {
             // 定义气泡控件的位置
@@ -266,9 +391,6 @@ namespace Demo4
                 m_sceneControl.Scene.Layers.Add(vector, layer3DSettingVector, true);
             layer3DDatasetPoint.UpdateData();
 
-
-
-            //m_sceneControl.Scene.Layers.Add(vector, new Layer3DSettingVector(), true);
             m_sceneControl.Scene.Refresh();
             recordset.Dispose();
         }
@@ -325,7 +447,7 @@ namespace Demo4
             this.searchText.Text = "";
         }
 
-
+        // 查找在fis中是否存在字段name
         private bool Contains(FieldInfos fis, string name)
         {
             foreach (FieldInfo fi in fis)
@@ -335,12 +457,42 @@ namespace Demo4
             return false;
         }
 
-
+        // 飞行 
         public void TestSceneFly(Scene sceneObject)
         {
+            Camera old = sceneObject.Camera;
+
             //构造一个相机对象，并飞行到该相机对象
-            Camera camera = new Camera(102, 31, 8000000, AltitudeMode.RelativeToGround);
-            sceneObject.Fly(camera);
+            Camera camera = new Camera(0, -60, 20000000, AltitudeMode.RelativeToGround);
+            sceneObject.Fly(camera, 1);
+
+            sceneObject.Fly(old, 2000);
+        }
+
+        // 量算选择
+        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            System.Windows.Controls.ComboBox cb = sender as System.Windows.Controls.ComboBox;
+            int select = cb.SelectedIndex;
+            switch(select)
+            {
+                case 0:     // 距离量算
+                    m_sceneControl.Action = Action3D.MeasureDistance;
+                    break;
+                case 1:     // 面积量算
+                    m_sceneControl.Action = Action3D.MeasureArea;
+                    break;
+                case 2:     // 结束量算
+                    m_sceneControl.Action = Action3D.Pan;
+                    break;
+                case 3:     // 清空量算结果
+                    m_sceneControl.Scene.TrackingLayer.Clear();
+                    m_sceneControl.Action = Action3D.Pan;
+                    break;
+                default:
+                    System.Windows.MessageBox.Show("请选择的操作");
+                    break;
+            }
         }
 
 

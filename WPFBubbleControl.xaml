@@ -4,9 +4,61 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <ListBox/>
+             d:DesignHeight="200" d:DesignWidth="200">
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="你点击的位置" Grid.Row="0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        <StackPanel Grid.Row="1" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="1"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1"/>
+                </Grid.ColumnDefinitions>
+                
+                <!--表格 行边框-->
+                <Canvas Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Background="Black"/>
+                <Canvas Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" Background="Black"/>
+                <Canvas Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" Background="Black"/>
+                <Canvas Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" Background="Black"/>
 
+                <!--表格 列边框-->
+                <Canvas Grid.Row="0" Grid.Column="0" Grid.RowSpan="7" Background="Black"/>
+                <Canvas Grid.Row="0" Grid.Column="2" Grid.RowSpan="7" Background="Black"/>
+                <Canvas Grid.Row="0" Grid.Column="4" Grid.RowSpan="7" Background="Black"/>
+
+                <!--表格内容-->
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="X坐标" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+                <TextBlock x:Name="x_position" Grid.Row="1" Grid.Column="3" Text="x" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Y坐标" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+                <TextBlock x:Name="y_position" Grid.Row="3" Grid.Column="3" Text="y" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="Z坐标" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+                <TextBlock x:Name="z_position" Grid.Row="5" Grid.Column="3" Text="z" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" Margin="5"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>
