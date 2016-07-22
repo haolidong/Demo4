@@ -86,6 +86,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ElectroicMap\CommonFunctions\Rotate.cs" />
+    <Compile Include="Util\Rotate.cs" />
     <Compile Include="WPFBubbleControl.xaml.cs">
       <DependentUpon>WPFBubbleControl.xaml</DependentUpon>
     </Compile>

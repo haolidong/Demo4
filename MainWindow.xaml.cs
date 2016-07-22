@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using System.Collections;
+using Demo4.Util;
 
 namespace Demo4
 {
@@ -46,6 +47,9 @@ namespace Demo4
 
         private Point3Ds m_point3Ds = new Point3Ds();
         private Point3D m_temPoint = Point3D.Empty;
+
+        // 存储最后点击的点的坐标
+        private Point3D lastPoint = Point3D.Empty;
 
         public MainWindow()
         {
@@ -131,6 +135,9 @@ namespace Demo4
                 Point3D p3 = m_sceneControl.Scene.PixelToGlobe(new System.Drawing.Point(e.X, e.Y),
                                 PixelToGlobeMode.TerrainAndModel);
                 m_point3Ds.Add(p3);
+
+                // 存储最后点击的点的坐标
+                lastPoint = p3;
             }
         }
         // 结束量算
@@ -631,7 +638,17 @@ namespace Demo4
 
         private void rotate_Click(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                Selection3D select = m_sceneControl.Scene.FindSelection(true)[0];
+                SuperMap.Data.Geometry geo = select.ToRecordset().GetGeometry();
+                Rotate.RotateByObject(m_sceneControl.Scene, geo, 3);
+            }
+            catch(Exception ex)
+            {
+                GeoPoint3D gp = new GeoPoint3D(lastPoint);
+                Rotate.RotateByObject(m_sceneControl.Scene, gp, 3);
+            }
         }
 
     }
