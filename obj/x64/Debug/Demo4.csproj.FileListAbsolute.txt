@@ -13,7 +13,6 @@ E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Mapping.dll
 E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Data.xml
 E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Mapping.xml
 E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\zh-CN\SuperMap.Data.resources.dll
-E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\Demo4.csprojResolveAssemblyReference.cache
 E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\Demo4.exe
 E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\Demo4.pdb
 E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Realspace.dll
