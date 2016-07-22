@@ -142,7 +142,7 @@ namespace Demo4
         // 正在进行量算
         private void TrackingHandler(object sender, Tracking3DEventArgs e) 
         {
-            //if (e == null || e.Geometry == null) return;
+            // 跟踪鼠标当前位置
             m_temPoint = new Point3D(e.X, e.Y, e.Z);
 
             if (m_sceneControl.Action == Action3D.MeasureDistance)  // 距离量算
@@ -591,7 +591,48 @@ namespace Demo4
                     break;
             }
         }
+        // 显示、隐藏帧率
+        private void fpsDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_sceneControl == null) return;
 
+            System.Windows.Controls.Button fpsBtn = sender as System.Windows.Controls.Button;
+            // 显示、隐藏帧率
+            m_sceneControl.IsFPSVisible = !m_sceneControl.IsFPSVisible;
+            // 切换按钮上的文字
+            if (m_sceneControl.IsFPSVisible)
+            {
+                fpsBtn.Content = "隐藏帧率";
+            }
+            else
+            {
+                fpsBtn.Content = "显示帧率";
+            }
+        }
+        // 显示、隐藏经纬网
+        private void latlonDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            if (m_sceneControl == null) return;
+
+            System.Windows.Controls.Button llBtn = sender as System.Windows.Controls.Button;
+
+            LatLonGrid latlon = m_sceneControl.Scene.LatLonGrid;
+            latlon.IsVisible = !latlon.IsVisible;
+
+            if (latlon.IsVisible)
+            {
+                llBtn.Content = "关闭经纬网";
+            }
+            else
+            {
+                llBtn.Content = "显示经纬网";
+            }
+        }
+
+        private void rotate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
     }
 }
