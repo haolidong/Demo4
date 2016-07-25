@@ -20,6 +20,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Forms;
 using System.Collections;
 using Demo4.Util;
+using Demo4.Controller;
 
 namespace Demo4
 {
@@ -28,10 +29,9 @@ namespace Demo4
     /// </summary>
     public partial class MainWindow : Window
     {
-        //private MapControl m_mapControl;
+        private CoreController m_controller;
         private Workspace m_workspace;
         private SceneControl m_sceneControl;
-        //private BubbleControl m_bubbleControl;
         private WPFBubbleControl m_wpfBubbleControl;
         private ElementHost m_bubbleControl;
 
@@ -55,16 +55,17 @@ namespace Demo4
         {
             InitializeComponent();
 
-            open();
+            //open();
 
-            createDataset();
-
+            //createDataset();
 
             // 搜索结果数据绑定
-            this.searchResult.ItemsSource = results;
+            //this.searchResult.ItemsSource = results;
 
-            TestSceneFly(m_sceneControl.Scene);
+            //TestSceneFly(m_sceneControl.Scene);
 
+            m_sceneControl = new SceneControl();
+            m_controller = new CoreController(m_sceneControl, this);
         }
 
 
@@ -88,7 +89,7 @@ namespace Demo4
         {
             m_wpfBubbleControl = new WPFBubbleControl();
             m_sceneControl = new SceneControl();
-            this.mapControlForm.Child = m_sceneControl;
+            this.controlForm.Child = m_sceneControl;
 
             m_workspace = new Workspace();
             WorkspaceConnectionInfo conninfo = new WorkspaceConnectionInfo();
@@ -105,11 +106,11 @@ namespace Demo4
             // 鼠标点击事件
             m_sceneControl.MouseDown += new MouseEventHandler(m_sceneControl_MouseDown);
             // 正在进行量算
-            m_sceneControl.Tracking += new Tracking3DEventHandler(TrackingHandler);
+            //m_sceneControl.Tracking += new Tracking3DEventHandler(TrackingHandler);
             // 一次量算完成
-            m_sceneControl.Tracked += new Tracked3DEventHandler(TrackedHandler);
+            //m_sceneControl.Tracked += new Tracked3DEventHandler(TrackedHandler);
             // 鼠标松开
-            m_sceneControl.MouseUp += new MouseEventHandler(m_sceneControl_MouseUp);
+            //m_sceneControl.MouseUp += new MouseEventHandler(m_sceneControl_MouseUp);
         }
 
         // 鼠标松开
@@ -117,17 +118,6 @@ namespace Demo4
         {
             if (e.Button == MouseButtons.Right)
             {
-                //if (m_sceneControl.Action == Action3D.MeasureDistance)
-                //{
-                //    GeoLine3D gl = new GeoLine3D(m_point3Ds);
-                //    GeoStyle3D g3d = new GeoStyle3D();
-                //    g3d.AltitudeMode = AltitudeMode.Absolute;
-                //    g3d.LineColor = System.Drawing.Color.Yellow;
-                //    g3d.LineWidth = 2;
-                //    gl.Style3D = g3d;
-                //    m_sceneControl.Scene.TrackingLayer.Add(gl, "line");
-                //}
-
                 EndOneMeasure();
             }
             else
@@ -202,8 +192,6 @@ namespace Demo4
         // 完成量算
         private void TrackedHandler(object sender, Tracked3DEventArgs e) 
         {
-            //if (e == null || e.Geometry == null) return;
-
             if (m_sceneControl.Action == Action3D.MeasureDistance)
             {
                 #region
@@ -333,22 +321,32 @@ namespace Demo4
 
         private void Window_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            m_sceneControl.Dispose();
-            m_workspace.Close();
-            m_workspace.Dispose();
+            //m_sceneControl.Dispose();
+            //m_workspace.Close();
+            //m_workspace.Dispose();
+            m_controller.Close();
         }
 
         // 允许、禁止弹框
         private void bubble_Click(object sender, RoutedEventArgs e)
         {
             // 先禁止加地标
-            if (m_canLocation)
-            {
-                location_Click(null, null);
-            }
+            //if (m_canLocation)
+            //{
+            //    location_Click(null, null);
+            //}
 
-            m_canBubble = !m_canBubble;
-            if (m_canBubble)
+            //m_canBubble = !m_canBubble;
+            //if (m_canBubble)
+            //{
+            //    this.bubble.Content = "禁止弹框";
+            //}
+            //else
+            //{
+            //    this.bubble.Content = "允许弹框";
+            //}
+            this.location.Content = "允许打地标";
+            if (m_controller.Bubble())
             {
                 this.bubble.Content = "禁止弹框";
             }
@@ -451,13 +449,12 @@ namespace Demo4
         private void location_Click(object sender, RoutedEventArgs e)
         {
             // 先禁止弹框
-            if (m_canBubble)
-            {
-                bubble_Click(null, null);
-            }
-
-            m_canLocation = !m_canLocation;
-            if (m_canLocation)
+            //if (m_canBubble)
+            //{
+            //    bubble_Click(null, null);
+            //}
+            this.bubble.Content = "允许弹框";
+            if (m_controller.Location())
             {
                 this.location.Content = "禁止加地标";
             }
@@ -581,20 +578,16 @@ namespace Demo4
             switch(select)
             {
                 case 0:     // 距离量算
-                    m_sceneControl.Action = Action3D.MeasureDistance;
+                    m_controller.MeasureDistance();
                     break;
                 case 1:     // 面积量算
-                    m_sceneControl.Action = Action3D.MeasureArea;
+                    m_controller.MeasureArea();
                     break;
                 case 2:     // 结束量算
-                    m_sceneControl.Action = Action3D.Pan;
+                    m_controller.EndMeasure();
                     break;
                 case 3:     // 清空量算结果
-                    m_sceneControl.Scene.TrackingLayer.Clear();
-                    m_sceneControl.Action = Action3D.Pan;
-                    break;
-                default:
-                    System.Windows.MessageBox.Show("请选择的操作");
+                    m_controller.ClearMeasure();
                     break;
             }
         }

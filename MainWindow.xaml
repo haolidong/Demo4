@@ -77,7 +77,7 @@
             </Grid>
         </StackPanel>
 
-        <WindowsFormsHost x:Name="mapControlForm" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="7"/>
+        <WindowsFormsHost x:Name="controlForm" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="7"/>
         <TextBlock x:Name="currentResult" HorizontalAlignment="Left" Margin="0,96,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="183"/>
         <TextBlock x:Name="totalResult" HorizontalAlignment="Left" Margin="0,121,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="183"/>
 
