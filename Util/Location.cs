@@ -20,13 +20,6 @@ namespace Demo4.Util
 
         // 是否打地标的控制开关
         private bool m_canLocation = false;
-        //public bool CanLocation
-        //{
-        //    get
-        //    {
-        //        return m_canLocation;
-        //    }
-        //}
 
         /// <summary>
         /// 构造打地标工具类

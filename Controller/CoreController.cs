@@ -1,4 +1,5 @@
-﻿using Demo4.Util;
+﻿using Demo4.Search;
+using Demo4.Util;
 using SuperMap.Data;
 using SuperMap.Realspace;
 using SuperMap.UI;
@@ -17,27 +18,26 @@ namespace Demo4.Controller
     {
         private SceneControl m_sceneControl;
         private Workspace m_workspace;
-        private MainWindow m_window;
 
         private Measure3D m_measure;
         private Location m_location;
         private BubblePop m_bubble;
+        private Rotate m_rotate;
+        private SearchAddress m_searchAddress;
 
         /// <summary>
         /// 构造核心控制器
         /// </summary>
         /// <param name="sceneControl">三维场景控件</param>
-        /// <param name="window">主窗体</param>
-        public CoreController(SceneControl sceneControl, MainWindow window)
+        public CoreController(SceneControl sceneControl)
         {
             this.m_sceneControl = sceneControl;
-            this.m_window = window;
 
             Init();
         }
 
         /// <summary>
-        /// 初始化地图，即打开地图
+        /// 初始化，打开地图，创建工具
         /// </summary>
         private void Init()
         {
@@ -50,6 +50,10 @@ namespace Demo4.Controller
             m_location = new Location(m_sceneControl);
             // 创建气泡弹框工具
             m_bubble = new BubblePop(m_sceneControl);
+            // 创建绕物旋转工具
+            m_rotate = new Rotate(m_sceneControl);
+            // 创建地址搜索工具
+            m_searchAddress = new SearchAddress(m_sceneControl);
         }
 
         /// <summary>
@@ -69,9 +73,6 @@ namespace Demo4.Controller
             m_sceneControl.Scene.Workspace = m_workspace;
             m_sceneControl.Scene.Open(m_workspace.Scenes[0]);
             m_sceneControl.Scene.Refresh();
-
-            // 将三维场景控件显示到主窗体上
-            m_window.controlForm.Child = m_sceneControl;
         }
 
         /// <summary>
@@ -141,6 +142,42 @@ namespace Demo4.Controller
             m_workspace.Dispose();
         }
 
+        /// <summary>
+        /// 经纬网显示开关
+        /// </summary>
+        /// <returns>经纬网开、关状态</returns>
+        public bool LatLon()
+        {
+            return Display.ToogleLatLon(m_sceneControl);
+        }
+
+        /// <summary>
+        /// 帧率显示开关
+        /// </summary>
+        /// <returns>帧率开、关状态</returns>
+        public bool FPS()
+        {
+            return Display.ToogleFPS(m_sceneControl);
+        }
+
+        /// <summary>
+        /// 绕物旋转
+        /// </summary>
+        /// <param name="speed">旋转速度</param>
+        public void Rotate(double speed)
+        {
+            m_rotate.RotateByObject(speed);
+        }
+
+        /// <summary>
+        /// 地址搜索
+        /// </summary>
+        /// <param name="searchText">搜索关键字</param>
+        /// <returns>搜索结果</returns>
+        public List<string> SearchAddress(string searchText)
+        {
+            return m_searchAddress.Search(searchText);
+        }
 
     } // end class CoreController
 

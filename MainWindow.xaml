@@ -31,11 +31,11 @@
             <ToolBar Height="30" >
                 <Button x:Name="bubble" Content="允许弹框" Margin="0,0,10,0" Click="bubble_Click"/>
                 <Button x:Name="location" Content="允许加地标" Margin="0,0,10,0" Click="location_Click"/>
-                <Button x:Name="latlonDisplay" Content="显示经纬网" Margin="0,0,10,0" Click="latlonDisplay_Click"/>
-                <Button x:Name="fpsDisplay" Content="显示帧率" Margin="0,0,10,0" Click="fpsDisplay_Click"/>
+                <CheckBox x:Name="latlonDisplay" Content="显示经纬网" Margin="0,0,10,0" Click="latlonDisplay_Click"/>
+                <CheckBox x:Name="fpsDisplay" Content="显示帧率" Margin="0,0,10,0" Click="fpsDisplay_Click"/>
                 <Button x:Name="rotate" Content="绕物旋转" Margin="0,0,10,0" Click="rotate_Click"/>
 
-                <ComboBox x:Name="measure" SelectionChanged="ComboBox_SelectionChanged_1">
+                <ComboBox x:Name="measure" MinWidth="50" SelectionChanged="ComboBox_SelectionChanged_1">
                     <ComboBoxItem>距离量算</ComboBoxItem>
                     <ComboBoxItem>面积量算</ComboBoxItem>
                     <ComboBoxItem>结束量算</ComboBoxItem>
