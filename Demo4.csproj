@@ -93,6 +93,8 @@
     <Compile Include="Util\Location.cs" />
     <Compile Include="Util\Measure3D.cs" />
     <Compile Include="Util\Rotate.cs" />
+    <Compile Include="WindowSetting\NativeMethods.cs" />
+    <Compile Include="WindowSetting\Win32.cs" />
     <Compile Include="WPFBubbleControl.xaml.cs">
       <DependentUpon>WPFBubbleControl.xaml</DependentUpon>
     </Compile>
@@ -140,7 +142,48 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\logo_title_b_f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Window\min_nb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Window\max_nb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Window\restore_nb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Window\close_nb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\area.png" />
+    <Resource Include="Images\Tool\line.png" />
+    <Resource Include="Images\Tool\location.png" />
+    <Resource Include="Images\Tool\measure.png" />
+    <Resource Include="Images\Tool\rotate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\bubble.png" />
+    <Resource Include="Images\Tool\latlon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\menu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RightSide\layer.png" />
+    <Resource Include="Images\RightSide\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RightSide\layer_20.png" />
+    <Resource Include="Images\RightSide\layer_20_b.png" />
+    <Resource Include="Images\RightSide\search_20.png" />
+    <Resource Include="Images\RightSide\search_20_b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\fps.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

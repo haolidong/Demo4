@@ -34,6 +34,7 @@ namespace Demo4.Controller
             this.m_sceneControl = sceneControl;
 
             Init();
+            SceneFlyIn();
         }
 
         /// <summary>
@@ -73,6 +74,20 @@ namespace Demo4.Controller
             m_sceneControl.Scene.Workspace = m_workspace;
             m_sceneControl.Scene.Open(m_workspace.Scenes[0]);
             m_sceneControl.Scene.Refresh();
+        }
+        
+        /// <summary>
+        /// 飞入场景动画
+        /// </summary>
+        public void SceneFlyIn()
+        {
+            Camera old = m_sceneControl.Scene.Camera;
+
+            //构造一个相机对象，并飞行到该相机对象
+            Camera camera = new Camera(0, -60, 25000000, AltitudeMode.RelativeToGround);
+            m_sceneControl.Scene.Fly(camera, 1);
+
+            m_sceneControl.Scene.Fly(old, 2000);
         }
 
         /// <summary>
