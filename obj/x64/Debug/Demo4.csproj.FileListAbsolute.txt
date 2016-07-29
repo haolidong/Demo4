@@ -19,4 +19,6 @@ E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Realspace.dll
 E:\visual studio 2012\Projects\Demo\Demo4\bin\x64\Debug\SuperMap.Realspace.xml
 E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\WPFBubbleControl.baml
 E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\WPFBubbleControl.g.cs
+E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\GeneratedInternalTypeHelper.g.cs
+E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\Demo4_MarkupCompile.lref
 E:\visual studio 2012\Projects\Demo\Demo4\obj\x64\Debug\Demo4.csprojResolveAssemblyReference.cache

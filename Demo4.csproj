@@ -86,6 +86,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Addition\Selectable.cs" />
+    <Compile Include="Animation\GridLengthAnimation.cs" />
     <Compile Include="Controller\CoreController.cs" />
     <Compile Include="Search\SearchAddress.cs" />
     <Compile Include="Util\BubblePop.cs" />
@@ -183,6 +185,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Tool\fps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Window\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\end.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\expand.png" />
+    <Resource Include="Images\Tool\expanded.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tool\lost.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -19,6 +19,8 @@ namespace Demo4.Controller
         private SceneControl m_sceneControl;
         private Workspace m_workspace;
 
+        private Camera m_position;
+
         private Measure3D m_measure;
         private Location m_location;
         private BubblePop m_bubble;
@@ -44,6 +46,9 @@ namespace Demo4.Controller
         {
             // 打开地图
             Open();
+
+            // 保存最开始的位置
+            m_position = m_sceneControl.Scene.Camera;
 
             // 创建三维量算工具
             m_measure = new Measure3D(m_sceneControl);
@@ -81,13 +86,20 @@ namespace Demo4.Controller
         /// </summary>
         public void SceneFlyIn()
         {
-            Camera old = m_sceneControl.Scene.Camera;
-
             //构造一个相机对象，并飞行到该相机对象
             Camera camera = new Camera(0, -60, 25000000, AltitudeMode.RelativeToGround);
             m_sceneControl.Scene.Fly(camera, 1);
+            // 飞到原位
+            m_sceneControl.Scene.Fly(m_position, 2000);
+        }
 
-            m_sceneControl.Scene.Fly(old, 2000);
+        /// <summary>
+        /// 回到原点
+        /// </summary>
+        public void ToOldPosition()
+        {
+            // 飞到原位
+            m_sceneControl.Scene.Fly(m_position, 2000);
         }
 
         /// <summary>
