@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Demo4.WindowSetting
 {
+    /// <summary>
+    /// 用于窗体风格设置
+    /// 代码来自网络 
+    /// </summary>
     public class NativeMethods
     {
 

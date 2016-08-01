@@ -8,7 +8,8 @@ using System.Windows;
 namespace Demo4.Addition
 {
     /// <summary>
-    /// 附加属性类，代表控件是否可被选择，模拟控件的选中和未选中两种状态
+    /// 附加属性类，给控件增加一个SelectProperty
+    /// 代表控件是否可被选择，模拟控件的选中和未选中两种状态
     /// </summary>
     class Selectable :DependencyObject
     {

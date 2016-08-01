@@ -6,6 +6,7 @@ using SuperMap.Data;
 using SuperMap.Realspace;
 using SuperMap.UI;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,92 +23,111 @@ namespace Demo4
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private readonly int customBorderThickness = 5;
-
-
-        /// <summary>  
-        /// Corner width used in HitTest  
-        /// </summary>  
-        private readonly int cornerWidth = 6;
-
-        /// <summary>  
-        /// Mouse point used by HitTest  
-        /// </summary>  
-        private Point mousePoint = new Point();  
-
-
         private CoreController m_controller;
         private SceneControl m_sceneControl;
+
+        private Panel m_currentTab;
+
+        /// <summary>
+        /// 窗体风格设置类，将MainWindow作参数传进去，进而设置窗体风格
+        /// 现在暂时不用。。。
+        /// </summary>
+        //private Demo4.WindowSetting.WindowStyle m_windowStyle;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // 窗体风格控制相关
+            // 窗体风格控制相关（代码实现在MainWindowStyle.cs中）
             this.SourceInitialized += MainWindow_SourceInitialized;
             this.StateChanged += MainWindow_StateChanged;
             this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
+            //m_windowStyle = new WindowSetting.WindowStyle(this);
 
+            // 地图显示控件
             m_sceneControl = new SceneControl();
             this.controlForm.Child = m_sceneControl;
 
             m_controller = new CoreController(m_sceneControl);
+
+            // 图层Tab下的工作空间树
+            WorkspaceTree wt = new WorkspaceTree();
+            wt.Workspace = m_sceneControl.Scene.Workspace;
+            this.layer.Child = wt;
+
+            // 当前选中的Tab
+            m_currentTab = this.searchTabTitle;
         }
 
-        // 关闭窗体
+        /// <summary>
+        /// 关闭窗体，释放相关资源
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
         {
             m_controller.Close();
         }
 
-        // 点击展开、关闭工具菜单
+        /// <summary>
+        /// 点击展开、关闭工具菜单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowMenu(object sender, MouseEventArgs e)
         {
             double width = this.toolbar.Width.Value == 50 ? 150 : 50;
             this.toolbar.Width = new GridLength(width);
         }
 
-        // 点击展开三维量算
+        /// <summary>
+        /// 点击展开三维量算
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MeasureClick(object sender, MouseEventArgs e)
         {
             ToolClick(sender, e);
 
             StackPanel sp = sender as StackPanel;
 
-            Image img = sp.Children[2] as Image;
+            // 展开动画、收起动画
+            DoubleAnimation da = new DoubleAnimation();
+            da.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
+            
+            // 更换展开图标
+            Image expandImg = sp.Children[2] as Image;  
             BitmapImage bi = new BitmapImage();
             bi.BeginInit();
             if (Selectable.GetSelectStatus(sp))
             {
+                // 更改图片、设置动画的起、止值
                 bi.UriSource = new Uri("Images/Tool/expanded.png", UriKind.Relative);
-                bi.EndInit();
                 // 展开动画
-                DoubleAnimation da = new DoubleAnimation();
-                da.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
                 da.From = 0;
-                da.To = 160;
-                this.measureTool.BeginAnimation(HeightProperty, da);
+                da.To = this.measureTool.ActualHeight;
             }
             else
             {
                 bi.UriSource = new Uri("Images/Tool/expand.png", UriKind.Relative);
-                bi.EndInit();
                 // 收起动画
-                DoubleAnimation da = new DoubleAnimation();
-                da.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
-                da.From = 160;
+                da.From = this.measureTool.ActualHeight;
                 da.To = 0;
-                this.measureTool.BeginAnimation(HeightProperty, da);
             }
-            img.Source = bi;
+            bi.EndInit();
+            expandImg.Source = bi;
+            this.measureTool.BeginAnimation(HeightProperty, da); // 执行动画
         }
 
-        // 量算选择
+        /// <summary>
+        /// 量算选择
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MeasureSelect(object sender, MouseEventArgs e)
         {
             StackPanel sp = sender as StackPanel;
-            int select = IndexOfParent(sp);
+            int select = IndexOfParent(sp); // 选择的量算工具的索引
             switch (select)
             {
                 case 0:     // 距离量算
@@ -136,7 +156,11 @@ namespace Demo4
             }
 
         }
-        // 将控件sp的选中状态设置为select
+        /// <summary>
+        /// 将控件的选中状态设置为指定值
+        /// </summary>
+        /// <param name="sp">要设置的控件</param>
+        /// <param name="select">要设置的选中状态</param>
         private void MeasureTool(StackPanel sp, bool select)
         {
             if (select)
@@ -154,7 +178,11 @@ namespace Demo4
                 }
             }
         }
-        // 查找控件在父元素中的索引
+        /// <summary>
+        /// 查找控件在父元素中的索引
+        /// </summary>
+        /// <param name="control">待查找的控件</param>
+        /// <returns>控件在父元素中的索引，返回-1时代表查找失败</returns>
         private int IndexOfParent(FrameworkElement control)
         {
             FrameworkElement parent = control.Parent as FrameworkElement;
@@ -166,369 +194,255 @@ namespace Demo4
                         return i;
                 }
             }
-            return -1;
+            return -1; 
         }
 
-        // 点击弹框按钮
+        /// <summary>
+        /// 点击弹框按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BubbleShow(object sender, MouseEventArgs e)
         {
-            //this.location.Content = "允许打地标";
-            //if (m_controller.Bubble())
-            //{
-            //    this.bubble.Content = "禁止弹框";
-            //}
-            //else
-            //{
-            //    this.bubble.Content = "允许弹框";
-            //}
             ToolClick(sender, e);
             m_controller.Bubble();
         }
 
-        // 点击加地标按钮
+        /// <summary>
+        /// 点击加地标按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LocationShow(object sender, MouseEventArgs e)
         {
-            //this.bubble.Content = "允许弹框";
-            //if (m_controller.Location())
-            //{
-            //    this.location.Content = "禁止加地标";
-            //}
-            //else
-            //{
-            //    this.location.Content = "允许加地标";
-            //}
             ToolClick(sender, e);
             m_controller.Location();
         }
 
-        // 地址搜索 
-        private void searchBtn_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 地址搜索
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SearchAddress(object sender, MouseEventArgs e)
         {
-            //this.searchResult.ItemsSource = null;
-            //this.searchResult.ItemsSource = m_controller.SearchAddress(this.searchText.Text);
-            //this.searchText.Text = "";
+            this.searchResult.ItemsSource = null;
+            this.searchResult.ItemsSource = m_controller.SearchAddress(this.searchText.Text);
+            this.searchText.Text = "";
         }
 
-        // 绕物旋转
+        /// <summary>
+        /// 绕物旋转
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Rotate(object sender, MouseEventArgs e)
         {
             m_controller.Rotate(3);
         }
 
-        // 显示、隐藏经纬网
+        /// <summary>
+        /// 显示、隐藏经纬网
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LatlonShow(object sender, MouseEventArgs e)
         {
             ToolClick(sender, e);
             m_controller.LatLon();
         }
 
-        // 显示、隐藏帧率
+        /// <summary>
+        /// 显示、隐藏帧率
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FPSShow(object sender, MouseEventArgs e)
         {
             ToolClick(sender, e);
             m_controller.FPS();
         }
 
-        // 我迷路了，返回原点
+        /// <summary>
+        /// 我迷路了，返回原点
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void IMLost(object sender, MouseEventArgs e)
         {
             m_controller.ToOldPosition();
         }
 
 
-        // 点击可选中的工具栏
+        /// <summary>
+        /// 点击可选中的工具栏，改变控件的选中状态（即Selectable.SelectProperty）
+        /// 并根据改变后的选中状态，显示相应的背景色来突出其状态
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ToolClick(object sender, MouseEventArgs e)
         {
             StackPanel sp = sender as StackPanel;
             // toogle选中状态
             bool select = !Selectable.GetSelectStatus(sp);
             Selectable.SetSelectStatus(sp, select);
-            // 根据选中状态不同背景色
-            Color c = select ? Color.FromArgb(100, 229, 229, 229) : Color.FromArgb(0, 229, 229, 229);
+            // 根据选中状态设置不同背景色
+            Color c = select ? Color.FromArgb(100, 229, 229, 229) : Color.FromArgb(0, 0, 0, 0);
             sp.Background = new SolidColorBrush(c);
         }
 
-        // 鼠标进入按钮
+        /// <summary>
+        /// 鼠标进入按钮，改变背景色
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InBtn(object sender, MouseEventArgs e)
         {
-            StackPanel sp = e.OriginalSource as StackPanel;
+            Panel p = sender as Panel;
 
             // 若是已被选中，不改变其背景色，直接退出
-            if (Selectable.GetSelectStatus(sp))
+            if (Selectable.GetSelectStatus(p))
             {
                 return;
             }
 
-            SolidColorBrush scb = sp.Background as SolidColorBrush;
+            SolidColorBrush scb = p.Background as SolidColorBrush;
 
+            // 颜色改变动画
             ColorAnimation ca = new ColorAnimation();
-            ca.From = Color.FromArgb(0, 229, 229, 229);
+            ca.From = scb.Color;
             ca.To = Color.FromArgb(100, 229, 229, 229);
             ca.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
 
             scb.BeginAnimation(SolidColorBrush.ColorProperty, ca);
         }
 
-        // 鼠标移出按钮
+        /// <summary>
+        /// 鼠标移出按钮，改变背景色
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OutBtn(object sender, MouseEventArgs e)
         {
-            StackPanel sp = sender as StackPanel;
+            Panel p = sender as Panel;
 
             // 若是已被选中，不改变其背景色，直接退出
-            if (Selectable.GetSelectStatus(sp))
+            if (Selectable.GetSelectStatus(p))
             {
                 return;
             }
 
-            SolidColorBrush scb = sp.Background as SolidColorBrush;
+            SolidColorBrush scb = p.Background as SolidColorBrush;
 
+            // 颜色改变动画
             ColorAnimation ca = new ColorAnimation();
             ca.From = scb.Color;
-            ca.To = Color.FromArgb(0, scb.Color.R, scb.Color.G, scb.Color.B);
+            ca.To = Color.FromArgb(0, 0, 0, 0);
             ca.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
 
             scb.BeginAnimation(SolidColorBrush.ColorProperty, ca);
         }
 
-        // 鼠标进入窗口关闭按钮
-        private void InClose(object sender, MouseEventArgs e)
+        /// <summary>
+        /// 显示搜索Tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SearchTabShow(object sender, MouseButtonEventArgs e)
         {
-            StackPanel sp = e.OriginalSource as StackPanel;
-            SolidColorBrush scb = sp.Background as SolidColorBrush;
-
-            ColorAnimation ca = new ColorAnimation();
-            ca.From = Color.FromArgb(255, 5, 147, 211);
-            ca.To = Color.FromArgb(255, 232, 17, 35);
-            ca.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
-
-            scb.BeginAnimation(SolidColorBrush.ColorProperty, ca);
-        }
-
-
-
-        
-
-
-        /************窗体风格设置---分离出去，单独成一个WindowStyle类************/
-
-        void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.OriginalSource.Equals(this.titleBar))
+            // 如果点击当前选中Tab，直接退出
+            if (m_currentTab == sender)
             {
-                WindowInteropHelper wih = new WindowInteropHelper(this);
-                Win32.SendMessage(wih.Handle, Win32.WM_NCLBUTTONDOWN, (int)Win32.HitTest.HTCAPTION, 0);
+                MessageBox.Show("Do Nothing");
                 return;
             }
+            m_currentTab = sender as Panel;
+
+            // 更换TabTitle图片
+            Image searchTabImg = (m_currentTab.Children[0] as Panel).Children[0] as Image;
+            Image layerTabImg = (this.layerTabTitle.Children[0] as Panel).Children[0] as Image;
+
+            BitmapImage searchBi = new BitmapImage();
+            BitmapImage layerBi = new BitmapImage();
+
+            searchBi.BeginInit();
+            searchBi.UriSource = new Uri("Images/RightSide/search_20_b.png", UriKind.Relative);
+            searchBi.EndInit();
+
+            layerBi.BeginInit();
+            layerBi.UriSource = new Uri("Images/RightSide/layer_20.png", UriKind.Relative);
+            layerBi.EndInit();
+
+            searchTabImg.Source = searchBi;
+            layerTabImg.Source = layerBi;
+
+            // 更换TabTitle背景色
+            m_currentTab.Background =
+                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+            this.layerTabTitle.Background =
+                new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+            // 更换TabTitle文字颜色
+            ((m_currentTab.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+                new SolidColorBrush(Color.FromArgb(255, 5, 147, 211));
+            ((this.layerTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+            // 显示选中的TabContent
+            this.searchTabContent.Visibility = System.Windows.Visibility.Visible;
+            this.layerTabContent.Visibility = System.Windows.Visibility.Hidden;
+           
         }
 
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        /// <summary>
+        /// 显示图层Tab
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LayerTabShow(object sender, MouseButtonEventArgs e)
         {
-
-            switch (msg)
+            // 如果点击当前选中Tab，直接退出
+            if (m_currentTab == sender)
             {
-                case Win32.WM_GETMINMAXINFO: // WM_GETMINMAXINFO message  
-                    WmGetMinMaxInfo(hwnd, lParam);
-                    handled = true;
-                    break;
-                case Win32.WM_NCHITTEST: // WM_NCHITTEST message  
-                    return WmNCHitTest(lParam, ref handled);
+                MessageBox.Show("Do Nothing");
+                return;
             }
+            m_currentTab = sender as Panel;
 
-            return IntPtr.Zero;
+            // 更换TabTitle图片
+            Image searchTabImg = (this.searchTabTitle.Children[0] as Panel).Children[0] as Image;
+            Image layerTabImg = (m_currentTab.Children[0] as Panel).Children[0] as Image;
+
+            BitmapImage searchBi = new BitmapImage();
+            BitmapImage layerBi = new BitmapImage();
+
+            searchBi.BeginInit();
+            searchBi.UriSource = new Uri("Images/RightSide/search_20.png", UriKind.Relative);
+            searchBi.EndInit();
+
+            layerBi.BeginInit();
+            layerBi.UriSource = new Uri("Images/RightSide/layer_20_b.png", UriKind.Relative);
+            layerBi.EndInit();
+
+            searchTabImg.Source = searchBi;
+            layerTabImg.Source = layerBi;
+
+            // 更换TabTitle背景色
+            m_currentTab.Background =
+                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+            this.searchTabTitle.Background =
+                new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+            // 更换TabTitle文字颜色
+            ((this.searchTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+            ((m_currentTab.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+                new SolidColorBrush(Color.FromArgb(255, 5, 147, 211));
+            // 显示选中的TabContent
+            this.searchTabContent.Visibility = System.Windows.Visibility.Hidden;
+            this.layerTabContent.Visibility = System.Windows.Visibility.Visible;
+
         }
 
-        private IntPtr WmNCHitTest(IntPtr lParam, ref bool handled)
-        {
-            if (this.WindowState == WindowState.Maximized)
-                return IntPtr.Zero;
-            // Update cursor point  
-            // The low-order word specifies the x-coordinate of the cursor.  
-            // #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))  
-            this.mousePoint.X = (int)(short)(lParam.ToInt32() & 0xFFFF);
-            // The high-order word specifies the y-coordinate of the cursor.  
-            // #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))  
-            this.mousePoint.Y = (int)(short)(lParam.ToInt32() >> 16);
-
-            // Do hit test  
-            handled = true;
-            if (Math.Abs(this.mousePoint.Y - this.Top) <= this.cornerWidth
-                && Math.Abs(this.mousePoint.X - this.Left) <= this.cornerWidth)
-            { // Top-Left  
-                return new IntPtr((int)Win32.HitTest.HTTOPLEFT);
-            }
-            else if (Math.Abs(this.ActualHeight + this.Top - this.mousePoint.Y) <= this.cornerWidth
-                && Math.Abs(this.mousePoint.X - this.Left) <= this.cornerWidth)
-            { // Bottom-Left  
-                return new IntPtr((int)Win32.HitTest.HTBOTTOMLEFT);
-            }
-            else if (Math.Abs(this.mousePoint.Y - this.Top) <= this.cornerWidth
-                && Math.Abs(this.ActualWidth + this.Left - this.mousePoint.X) <= this.cornerWidth)
-            { // Top-Right  
-                return new IntPtr((int)Win32.HitTest.HTTOPRIGHT);
-            }
-            else if (Math.Abs(this.ActualWidth + this.Left - this.mousePoint.X) <= this.cornerWidth
-                && Math.Abs(this.ActualHeight + this.Top - this.mousePoint.Y) <= this.cornerWidth)
-            { // Bottom-Right  
-                return new IntPtr((int)Win32.HitTest.HTBOTTOMRIGHT);
-            }
-            else if (Math.Abs(this.mousePoint.X - this.Left) <= this.customBorderThickness)
-            { // Left  
-                return new IntPtr((int)Win32.HitTest.HTLEFT);
-            }
-            else if (Math.Abs(this.ActualWidth + this.Left - this.mousePoint.X) <= this.customBorderThickness)
-            { // Right  
-                return new IntPtr((int)Win32.HitTest.HTRIGHT);
-            }
-            else if (Math.Abs(this.mousePoint.Y - this.Top) <= this.customBorderThickness)
-            { // Top  
-                return new IntPtr((int)Win32.HitTest.HTTOP);
-            }
-            else if (Math.Abs(this.ActualHeight + this.Top - this.mousePoint.Y) <= this.customBorderThickness)
-            { // Bottom  
-                return new IntPtr((int)Win32.HitTest.HTBOTTOM);
-            }
-            else
-            {
-                handled = false;
-                return IntPtr.Zero;
-            }
-        }
-
-        void MainWindow_StateChanged(object sender, EventArgs e)
-        {
-            Image maxBtnImg = this.maxImg;
-            BitmapImage bi = new BitmapImage();
-            bi.BeginInit();
-
-            if (WindowState == WindowState.Maximized)
-            {
-                //this.BorderThickness = new System.Windows.Thickness(0);
-                // 更换最大化按钮的图片
-                bi.UriSource = new Uri("Images/Window/restore_nb.png", UriKind.Relative);
-                bi.EndInit();
-                //maxBtnImg.Source = bi;
-            }
-            else
-            {
-                //this.BorderThickness = new System.Windows.Thickness(customBorderThickness);
-                // 更换最大化按钮的图片
-                bi.UriSource = new Uri("Images/Window/max_nb.png", UriKind.Relative);
-                bi.EndInit();
-            }
-            maxBtnImg.Source = bi;
-        }
-
-        void MainWindow_SourceInitialized(object sender, EventArgs e)
-        {
-            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-            if (source == null)
-                // Should never be null  
-                throw new Exception("Cannot get HwndSource instance.");
-
-            source.AddHook(new HwndSourceHook(this.WndProc));
-        }
-
-        private void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
-        {
-            // MINMAXINFO structure  
-            Win32.MINMAXINFO mmi = (Win32.MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(Win32.MINMAXINFO));
-
-            // Get handle for nearest monitor to this window  
-            WindowInteropHelper wih = new WindowInteropHelper(this);
-            IntPtr hMonitor = Win32.MonitorFromWindow(wih.Handle, Win32.MONITOR_DEFAULTTONEAREST);
-
-            // Get monitor info  
-            Win32.MONITORINFOEX monitorInfo = new Win32.MONITORINFOEX();
-            monitorInfo.cbSize = Marshal.SizeOf(monitorInfo);
-            Win32.GetMonitorInfo(new HandleRef(this, hMonitor), monitorInfo);
-
-            // Get HwndSource  
-            HwndSource source = HwndSource.FromHwnd(wih.Handle);
-            if (source == null)
-                // Should never be null  
-                throw new Exception("Cannot get HwndSource instance.");
-            if (source.CompositionTarget == null)
-                // Should never be null  
-                throw new Exception("Cannot get HwndTarget instance.");
-
-            // Get transformation matrix  
-            Matrix matrix = source.CompositionTarget.TransformFromDevice;
-
-            // Convert working area  
-            Win32.RECT workingArea = monitorInfo.rcWork;
-            Point dpiIndependentSize =
-                matrix.Transform(new Point(
-                        workingArea.Right - workingArea.Left,
-                        workingArea.Bottom - workingArea.Top
-                        ));
-
-            // Convert minimum size  
-            Point dpiIndenpendentTrackingSize = matrix.Transform(new Point(
-                this.MinWidth,
-                this.MinHeight
-                ));
-
-            // Set the maximized size of the window  
-            mmi.ptMaxSize.x = (int)dpiIndependentSize.X;
-            mmi.ptMaxSize.y = (int)dpiIndependentSize.Y;
-
-            // Set the position of the maximized window  
-            mmi.ptMaxPosition.x = 0;
-            mmi.ptMaxPosition.y = 0;
-
-            // Set the minimum tracking size  
-            mmi.ptMinTrackSize.x = (int)dpiIndenpendentTrackingSize.X;
-            mmi.ptMinTrackSize.y = (int)dpiIndenpendentTrackingSize.Y;
-
-            Marshal.StructureToPtr(mmi, lParam, true);
-        }
-
-        private void MaxClick(object sender, RoutedEventArgs e)
-        {
-            if (this.WindowState == WindowState.Maximized)
-                this.WindowState = WindowState.Normal;
-            else
-                this.WindowState = WindowState.Maximized;
-        }
-
-        private void MinClick(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = System.Windows.WindowState.Minimized;
-        }
-
-        private void CloseClick(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void Window_Loaded_1(object sender, RoutedEventArgs e)
-        {
-            // 获取窗体句柄 
-
-            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-
-
-
-            // 获得窗体的 样式 
-
-            long oldstyle = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE);
-
-
-
-            // 更改窗体的样式为无边框窗体 
-
-            NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE, oldstyle & ~NativeMethods.WS_CAPTION);
-
-
-
-            // SetWindowLong(hwnd, GWL_EXSTYLE, oldstyle & ~WS_EX_LAYERED); 
-
-            // 1 | 2 << 8 | 3 << 16  r=1,g=2,b=3 详见winuse.h文件 
-
-            // 设置窗体为透明窗体 
-
-            NativeMethods.SetLayeredWindowAttributes(hwnd, 1 | 2 << 8 | 3 << 16, 0, NativeMethods.LWA_ALPHA);
-        }
 
     }
 }

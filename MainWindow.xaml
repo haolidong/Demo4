@@ -4,9 +4,9 @@
         xmlns:local="clr-namespace:Demo4.Addition"
         Title="可视化综合作战指挥平台" WindowStyle="None" 
         WindowState="Maximized"  Icon="Images/Window/icon.png" 
-        MinHeight="650" MinWidth="800" Width="800" Height="650"
+        MinHeight="650" MinWidth="950" Width="950" Height="650"
         Closing="Window_Closing_1" Loaded="Window_Loaded_1"
-        >
+         >
 
     <Grid>
 
@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <!--顶部蓝色标题栏-->
-        <DockPanel x:Name="titleBar" Grid.Row="0" Background="#FF0593D3">
+        <StackPanel x:Name="titleBar" Grid.Row="0" Background="#FF0593D3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
@@ -27,27 +27,32 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="96"/>
                 </Grid.ColumnDefinitions>
+                <!--LOGO-->
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Left">
                     <Image Source="Images/logo_title_b_f.png" Width="262" Height="129" Margin="28,0,28,0"/>
                 </StackPanel>
+                <!--窗体右上角三个操作按钮-->
                 <StackPanel x:Name="windowBtn" Orientation="Horizontal" VerticalAlignment="Top"
                         Grid.Row="0" Grid.Column="1">
+                    <!--最小化-->
                     <StackPanel x:Name="minBtn" MouseEnter="InBtn" MouseLeave="OutBtn" 
                                 MouseLeftButtonUp="MinClick" Background="#00ffffff">
                         <Image Source="Images/Window/min_nb.png" Width="32" Height="32" Margin="0"/>
                     </StackPanel>
+                    <!--最大化-->
                     <StackPanel x:Name="maxBtn" MouseEnter="InBtn" MouseLeave="OutBtn" 
                                 MouseLeftButtonUp="MaxClick" Background="#00ffffff">
                         <Image x:Name="maxImg" Source="Images/Window/restore_nb.png" 
                                Width="32" Height="32" Margin="0"/>
                     </StackPanel>
+                    <!--关闭-->
                     <StackPanel x:Name="closeBtn" MouseEnter="InClose" MouseLeave="OutBtn" 
                                 MouseLeftButtonUp="CloseClick" Background="#00ffffff">
                         <Image Source="Images/Window/close_nb.png" Width="32" Height="32" Margin="0"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
-        </DockPanel>
+        </StackPanel>
 
         <!--标题栏以下内容主体-->
         <DockPanel Grid.Row="1" >
@@ -176,20 +181,20 @@
                                    VerticalAlignment="Center" Margin="9"/>
                     </StackPanel>
                 </StackPanel>
+                <!--左边工具栏结束-->
                 
                 <!--地图显示区-->
                 <WindowsFormsHost x:Name="controlForm" Grid.Column="1"/>
                 
                 <!--右侧搜索区-->
                 <StackPanel Grid.Column="2" Orientation="Vertical">
-                    
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="50"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         
-                        <!--顶部分栏-->
+                        <!--顶部Tab分栏-->
                         <DockPanel Height="50" Background="#CC0593D3">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -197,16 +202,18 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <!--搜索-->
-                                <DockPanel Grid.Column="0" Background="White">
+                                <DockPanel x:Name="searchTabTitle" Grid.Column="0" Background="White"
+                                           MouseLeftButtonDown="SearchTabShow">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Image Source="Images/RightSide/search_20_b.png" 
                                                Width="20" Margin="0, 0, 9, 0"/>
-                                        <TextBlock Text="搜索" Foreground="#CC0593D3" FontSize="14" 
+                                        <TextBlock Text="搜索" Foreground="#FF0593D3" FontSize="14" 
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
                                 </DockPanel>
                                 <!--图层-->
-                                <DockPanel Grid.Column="1">
+                                <DockPanel x:Name="layerTabTitle" Grid.Column="1" Background="Transparent"
+                                           MouseLeftButtonDown="LayerTabShow">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Image Source="Images/RightSide/layer_20.png" 
                                                Width="20" Margin="0, 0, 9, 0"/>
@@ -217,49 +224,139 @@
                             </Grid>
                         </DockPanel>
 
-                        <!--栏目内容-->
-                        <DockPanel Grid.Row="1" Margin="5, 20, 5, 20" Height="30">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="50"/>
-                                </Grid.ColumnDefinitions>
+                        <!--搜索Tab-->
+                        <StackPanel x:Name="searchTabContent" Grid.Row="1" Margin="5, 20, 5, 20" 
+                                    Orientation="Vertical">
+                            <!--搜索框-->
+                            <StackPanel Height="30">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <!--搜索框-->
-                                <TextBox Grid.Column="0" VerticalContentAlignment="Center" 
-                                         BorderBrush="#CC0593D3">
-                                    <TextBox.Resources>
-                                        <VisualBrush x:Key="HelpBrush" TileMode="None" Opacity="0.3" Stretch="None" AlignmentX="Left">
-                                            <VisualBrush.Visual>
-                                                <TextBlock  Text="在此搜索地址，如：北京"/>
-                                            </VisualBrush.Visual>
-                                        </VisualBrush>
-                                    </TextBox.Resources>
-                                    <TextBox.Style>
-                                        <Style TargetType="TextBox">
-                                            <Style.Triggers>
-                                                <Trigger Property="Text" Value="{x:Null}">
-                                                    <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
-                                                </Trigger>
-                                                <Trigger Property="Text" Value="">
-                                                    <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBox.Style>
-                                </TextBox>
-                                <!--搜索按钮-->
-                                <DockPanel Grid.Column="1" Background="#CC0593D3" Height="30">
-                                    <TextBlock Text="搜索" Foreground="White" HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" FontSize="14"/>
-                                </DockPanel>
-                            </Grid>
-                        </DockPanel>
+                                    <!--搜索框-->
+                                    <TextBox x:Name="searchText"  Grid.Column="0" 
+                                             VerticalContentAlignment="Center" 
+                                             BorderBrush="#CC0593D3">
+                                        <!--设置搜索框的 Hint-->
+                                        <TextBox.Resources>
+                                            <VisualBrush x:Key="HelpBrush" TileMode="None" 
+                                                         Opacity="0.3" Stretch="None" AlignmentX="Left">
+                                                <VisualBrush.Visual>
+                                                    <TextBlock  Text="在此搜索地址，如：北京"/>
+                                                </VisualBrush.Visual>
+                                            </VisualBrush>
+                                        </TextBox.Resources>
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Style.Triggers>
+                                                    <Trigger Property="Text" Value="{x:Null}">
+                                                        <Setter Property="Background" 
+                                                                Value="{StaticResource HelpBrush}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="Text" Value="">
+                                                        <Setter Property="Background" 
+                                                                Value="{StaticResource HelpBrush}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                    <!--搜索按钮-->
+                                    <DockPanel Grid.Column="1" Background="#CC0593D3" Height="30">
+                                        <DockPanel x:Name="searchBtn"  MouseEnter="InBtn" 
+                                                   MouseLeave="OutBtn" Background="#00000000" 
+                                                   MouseLeftButtonDown="SearchAddress">
+                                            <TextBlock Text="搜索" Foreground="White" FontSize="14"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
+                                        </DockPanel>
+                                    </DockPanel>
+                                </Grid>
+                            </StackPanel>
+                            <!--搜索框结束-->
+                            
+                            <!--搜索结果-->
+                            <StackPanel Orientation="Vertical" Margin="0, 20, 0, 0">
+                                <!--带标题的外边框-->
+                                <GroupBox Header="搜索结果" BorderBrush="#CC0593D3" Foreground="#FF0593D3"
+                                          Padding="0">
+                                    <!--包装搜索结果-->
+                                    <StackPanel Orientation="Vertical"  Margin="0, 10, 0, 10">
+                                        <StackPanel Orientation="Horizontal" Margin="4, 0, 0, 10">
+                                            <TextBlock Text="共" Foreground="Black"/>
+                                            <TextBlock Text="{Binding Path=Items.Count, ElementName=searchResult}"
+                                                       Margin="5, 0, 5, 0"/>
+                                            <TextBlock Text="条搜索结果" Foreground="Black"/>
+                                        </StackPanel>
+                                        <ListBox x:Name="searchResult" BorderBrush="White" FontSize="14">
+                                            <!--包装结果项-->
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="-7, 3, 0, 3">
+                                                        <DockPanel Width="29" Height="37" Margin="2, 0, 2, 0"
+                                                                   DockPanel.Dock="Left" >
+                                                            <DockPanel.Background>
+                                                                <ImageBrush 
+                                                                    ImageSource="Images/RightSide/loc.png" 
+                                                                     />
+                                                            </DockPanel.Background>
+                                                            <DockPanel >
+                                                                <TextBlock Text="5" DockPanel.Dock="Left"
+                                                                           HorizontalAlignment="Center" 
+                                                                           Margin="0, 4, 0, 0"
+                                                                           Foreground="White"/>
+                                                            </DockPanel>
+                                                        </DockPanel>
+                                                        <StackPanel Orientation="Vertical" Margin="1">
+                                                            <TextBlock Text="{Binding}" FontSize="14"
+                                                                       Foreground="#FF0593D3"/>
+                                                            <TextBlock Text="北京市怀柔区盘古路32号" FontSize="12"
+                                                                       Foreground="#aaa" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </GroupBox>
+                                
+                                <!--<StackPanel Orientation="Horizontal">
+                                    <DockPanel Width="29" Height="37" DockPanel.Dock="Left"
+                                                >
+                                        <DockPanel.Background>
+                                            <ImageBrush ImageSource="Images/RightSide/loc.png"/>
+                                        </DockPanel.Background>
+                                        <DockPanel >
+                                            <TextBlock Text="1"  DockPanel.Dock="Left"
+                                               HorizontalAlignment="Center" 
+                                                       Foreground="White" Margin="0, 4, 0, 0"/>
+                                        </DockPanel>
+                                    </DockPanel>
+                                    <StackPanel Orientation="Vertical"  >
+                                        <TextBlock Text="水立方" FontSize="14" Foreground="#CC0593D3"/>
+                                        <TextBlock Text="北京市怀柔区盘古路32号" FontSize="12"
+                                                   Foreground="#aaa" />
+                                    </StackPanel>
+                                </StackPanel>-->
+
+                            </StackPanel>
+                            <!--搜索结果结束-->
+                        </StackPanel>
+                        <!--搜索Tab结束-->
+                    
+                        <!--图层Tab-->
+                        <StackPanel x:Name="layerTabContent" Grid.Row="1" Margin="5, 20, 5, 20"
+                                     Visibility="Hidden">
+                            <WindowsFormsHost x:Name="layer"/>
+                        </StackPanel>
 
                     </Grid>
                     
                 </StackPanel>
-
+                <!--右侧搜索区结束-->
+                
             </Grid>
         </DockPanel>
         

@@ -73,7 +73,7 @@ namespace Demo4.Controller
             conninfo.Type = WorkspaceType.SXWU;
             string file =
                 @"E:\super_map\SMO_DotNET_802_13626_55470_CHS_Zip\SampleData\Analysis3D\Analysis3D.sxwu";
-            conninfo.Server = file;
+            conninfo.Server = file; // 这里只能是绝对路径（怎么使用相对路径呢？？？）
 
             m_workspace.Open(conninfo);
             m_sceneControl.Scene.Workspace = m_workspace;
@@ -203,7 +203,14 @@ namespace Demo4.Controller
         /// <returns>搜索结果</returns>
         public List<string> SearchAddress(string searchText)
         {
-            return m_searchAddress.Search(searchText);
+            //return m_searchAddress.Search(searchText);
+            List<string> results = new List<string>();
+            results.Add("北京");
+            results.Add("怀柔");
+            results.Add("昌平");
+            results.Add("水立方");
+            results.Add("盘古大观");
+            return results;
         }
 
     } // end class CoreController

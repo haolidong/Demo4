@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
   
 namespace Demo4.WindowSetting  
 {  
+    /// <summary>
+    /// 用于设置窗体风格而封装的Win32API
+    /// 代码来自网络 
+    /// </summary>
     class Win32  
     {
         public const int WM_NCHITTEST = 0x0084;
