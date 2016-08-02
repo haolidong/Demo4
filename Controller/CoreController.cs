@@ -5,6 +5,7 @@ using SuperMap.Realspace;
 using SuperMap.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,9 +71,9 @@ namespace Demo4.Controller
             // 打开地图
             m_workspace = new Workspace();
             WorkspaceConnectionInfo conninfo = new WorkspaceConnectionInfo();
-            conninfo.Type = WorkspaceType.SXWU;
+            conninfo.Type = WorkspaceType.SMWU;
             string file =
-                @"E:\super_map\SMO_DotNET_802_13626_55470_CHS_Zip\SampleData\Analysis3D\Analysis3D.sxwu";
+                @"E:\super_map\SMO_DotNET_802_13626_55470_CHS_Zip\SampleData\OlympicGreen\OlympicGreen.smwu";
             conninfo.Server = file; // 这里只能是绝对路径（怎么使用相对路径呢？？？）
 
             m_workspace.Open(conninfo);
@@ -201,16 +202,16 @@ namespace Demo4.Controller
         /// </summary>
         /// <param name="searchText">搜索关键字</param>
         /// <returns>搜索结果</returns>
-        public List<string> SearchAddress(string searchText)
+        public ObservableCollection<Address> SearchAddress(string searchText)
         {
-            //return m_searchAddress.Search(searchText);
-            List<string> results = new List<string>();
-            results.Add("北京");
-            results.Add("怀柔");
-            results.Add("昌平");
-            results.Add("水立方");
-            results.Add("盘古大观");
-            return results;
+            return m_searchAddress.Search(searchText);
+            //List<string> results = new List<string>();
+            //results.Add("北京");
+            //results.Add("怀柔");
+            //results.Add("昌平");
+            //results.Add("水立方");
+            //results.Add("盘古大观");
+            //return results;
         }
 
     } // end class CoreController

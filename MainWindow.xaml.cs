@@ -1,12 +1,14 @@
 ﻿using Demo4.Addition;
 using Demo4.Animation;
 using Demo4.Controller;
+using Demo4.Search;
 using Demo4.WindowSetting;
 using SuperMap.Data;
 using SuperMap.Realspace;
 using SuperMap.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +30,8 @@ namespace Demo4
 
         private Panel m_currentTab;
 
+        private ObservableCollection<Address> results;
+
         /// <summary>
         /// 窗体风格设置类，将MainWindow作参数传进去，进而设置窗体风格
         /// 现在暂时不用。。。
@@ -43,6 +47,10 @@ namespace Demo4
             this.StateChanged += MainWindow_StateChanged;
             this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             //m_windowStyle = new WindowSetting.WindowStyle(this);
+
+            // 搜索结果绑定
+            results = new ObservableCollection<Address>();
+            this.searchResult.ItemsSource = results;
 
             // 地图显示控件
             m_sceneControl = new SceneControl();

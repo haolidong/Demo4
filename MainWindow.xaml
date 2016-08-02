@@ -290,7 +290,8 @@
                                           Padding="0">
                                     <!--包装搜索结果-->
                                     <StackPanel Orientation="Vertical"  Margin="0, 10, 0, 10">
-                                        <StackPanel Orientation="Horizontal" Margin="4, 0, 0, 10">
+                                        <StackPanel Orientation="Horizontal" Margin="4, 0, 0, 10"
+                                                    MaxHeight="400">
                                             <TextBlock Text="共" Foreground="Black"/>
                                             <TextBlock Text="{Binding Path=Items.Count, ElementName=searchResult}"
                                                        Margin="5, 0, 5, 0"/>
@@ -309,16 +310,19 @@
                                                                      />
                                                             </DockPanel.Background>
                                                             <DockPanel >
-                                                                <TextBlock Text="5" DockPanel.Dock="Left"
+                                                                <TextBlock Text="{Binding Path=Num}" 
+                                                                           DockPanel.Dock="Left"
                                                                            HorizontalAlignment="Center" 
                                                                            Margin="0, 4, 0, 0"
                                                                            Foreground="White"/>
                                                             </DockPanel>
                                                         </DockPanel>
                                                         <StackPanel Orientation="Vertical" Margin="1">
-                                                            <TextBlock Text="{Binding}" FontSize="14"
+                                                            <TextBlock Text="{Binding Path=Name}" 
+                                                                       FontSize="14"
                                                                        Foreground="#FF0593D3"/>
-                                                            <TextBlock Text="北京市怀柔区盘古路32号" FontSize="12"
+                                                            <TextBlock Text="{Binding Path=Detail}" 
+                                                                       FontSize="12"
                                                                        Foreground="#aaa" />
                                                         </StackPanel>
                                                     </StackPanel>

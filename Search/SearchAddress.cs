@@ -2,9 +2,11 @@
 using SuperMap.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Demo4.Search
 {
@@ -17,7 +19,8 @@ namespace Demo4.Search
         private Workspace m_workspace;
 
         // 搜索结果
-        private List<string> results;
+        //private List<string> results;
+        private ObservableCollection<Address> results;
 
         /// <summary>
         ///  构造地址搜索工具
@@ -28,7 +31,7 @@ namespace Demo4.Search
             this.m_sceneControl = sceneControl;
             this.m_workspace = sceneControl.Scene.Workspace;
 
-            results = new List<string>();
+            results = new ObservableCollection<Address>();
         }
 
         /// <summary>
@@ -36,7 +39,7 @@ namespace Demo4.Search
         /// </summary>
         /// <param name="searchText">查找词</param>
         /// <returns>查找结果</returns>
-        public List<string> Search(string searchText)
+        public ObservableCollection<Address> Search(string searchText)
         {
             // 未输入任何查询条件，不进行查询
             if (searchText.Equals("") || searchText == null)
@@ -51,39 +54,68 @@ namespace Demo4.Search
             DatasetVector dv = null;
             QueryParameter qp = null;
 
-            for (int i = 0; i < m_workspace.Datasources[0].Datasets.Count; ++i)
+            // 在Building数据集中查找地址
+            dv = m_workspace.Datasources[0].Datasets["Building"] as DatasetVector;
+            if (dv == null)
             {
-                dv = m_workspace.Datasources[0].Datasets[i] as DatasetVector;
-
-                if (dv == null) continue;
-
-                qp = new QueryParameter();
-                qp.HasGeometry = true;
-                qp.CursorType = CursorType.Static;
-
-                Recordset recordset = dv.Query(qp);
-
-                FieldInfos infos = recordset.GetFieldInfos();
-
-                while (!recordset.IsEOF)
-                {
-                    if (!Contains(infos, "NAME"))
-                    {
-                        recordset.MoveNext();
-                        continue;
-                    }
-                    string name = recordset.GetFieldValue("NAME").ToString();
-                    if (name.Contains(searchText))
-                    {
-                        results.Add("Name : " + name);
-                    }
-                    recordset.MoveNext();
-                }
-
-                recordset.Dispose();
+                System.Windows.MessageBox.Show("数据集为空");
             }
 
+            qp = new QueryParameter();
+            qp.HasGeometry = true;
+            qp.CursorType = CursorType.Static;
+            Recordset recordset = dv.Query(qp);
+            Object ob = null;
+
+            // 遍历记录集
+            while (!recordset.IsEOF)
+            {
+                ob = recordset.GetFieldValue("Name");
+                // 如果Name为空，退出
+                if (ob == null) 
+                {
+                    recordset.MoveNext();
+                    continue; 
+                }
+
+                string name = ob.ToString();
+                // 当记录集中的该记录的Name字段包含搜索关键字，则当做匹配成功
+                if (name.Contains(searchText))
+                {
+                    results.Add(CreateAddress(recordset));
+                }
+                recordset.MoveNext();
+            }
+
+            recordset.Dispose();
             return results;
+        }
+
+        /// <summary>
+        /// 根据记录集中的当前记录，构造一个Address对象
+        /// </summary>
+        /// <param name="recordeset">记录集</param>
+        /// <returns>地址对象</returns>
+        private Address CreateAddress(Recordset recordset)
+        {
+            Address address = new Address();
+
+            string name = recordset.GetFieldValue("Name") as string;
+            string detail = recordset.GetFieldValue("Address") as string;
+            string introduction = recordset.GetFieldValue("Introduction") as string;
+            double latitude  = (double)recordset.GetFieldValue("Latitude");
+            double longitude  = (double)recordset.GetFieldValue("Longitude");
+            double altitude  = (double)recordset.GetFieldValue("Altitude");
+
+            address.Num = results.Count + 1;
+            address.Name = name == null ? "无地名" : name;
+            address.Detail = detail == null ? "无详细地址" : detail;
+            address.Introduction = introduction == null ? "无详细信息" : introduction;
+            address.Latitude = latitude;
+            address.Longitude = longitude;
+            address.Altitude = altitude;
+
+            return address;
         }
 
         /// <summary>

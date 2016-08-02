@@ -93,6 +93,7 @@
     <Compile Include="Animation\GridLengthAnimation.cs" />
     <Compile Include="Controller\CoreController.cs" />
     <Compile Include="MainWindowStyle.cs" />
+    <Compile Include="Search\Address.cs" />
     <Compile Include="Search\SearchAddress.cs" />
     <Compile Include="Util\BubblePop.cs" />
     <Compile Include="Util\Display.cs" />
