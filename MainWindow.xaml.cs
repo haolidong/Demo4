@@ -64,7 +64,7 @@ namespace Demo4
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_Closing_1(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             m_controller.Close();
         }

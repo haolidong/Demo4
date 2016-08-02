@@ -234,7 +234,7 @@ namespace Demo4
             this.Close();
         }
 
-        private void Window_Loaded_1(object sender, RoutedEventArgs e)
+        private void MainWindowLoaded(object sender, RoutedEventArgs e)
         {
             // 获取窗体句柄 
             IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;

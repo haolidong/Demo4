@@ -1,0 +1,6 @@
+# folder
+bin/*
+obj/*
+
+# executable file
+*.exe
