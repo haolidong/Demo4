@@ -76,8 +76,17 @@ namespace Demo4
         /// <param name="e"></param>
         private void ShowMenu(object sender, MouseEventArgs e)
         {
-            double width = this.toolbar.Width.Value == 50 ? 150 : 50;
-            this.toolbar.Width = new GridLength(width);
+            //double width = this.toolbar.Width.Value == 50 ? 150 : 50;
+            //this.toolbar.Width = new GridLength(width);
+
+            if (Grid.GetColumnSpan(this.tool) == 1)
+            {
+                Grid.SetColumnSpan(this.tool, 2);
+            }
+            else
+            {
+                Grid.SetColumnSpan(this.tool, 1);
+            }
         }
 
         /// <summary>

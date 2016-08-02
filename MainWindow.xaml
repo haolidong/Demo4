@@ -57,136 +57,143 @@
         <DockPanel Grid.Row="1" >
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="toolbar" Width="150"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="100"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="250"/>
                 </Grid.ColumnDefinitions>
                 
                 <!--左边工具栏-->
-                <StackPanel Grid.Column="0" Background="#CC0593D3" Orientation="Vertical">
-                    <!--工具菜单-->
-                    <StackPanel x:Name="toolMenu" Orientation="Horizontal" 
-                                MouseEnter="InBtn" MouseLeave="OutBtn" 
-                                MouseDown="ShowMenu"  Background="#00ffffff">
-                        <Image Width="32" Height="32" Source="Images/Tool/menu.png" Margin="9"/>
-                        <TextBlock Text="工具菜单" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
+                <WindowsFormsHost x:Name="tool" Grid.Column="0" Grid.ColumnSpan="1"
+                                  Panel.ZIndex="1" Background="Transparent">
+                    <ElementHost>
+                        <StackPanel Background="#CC0593D3" Orientation="Vertical">
+                            <!--工具菜单-->
+                            <StackPanel x:Name="toolMenu" Orientation="Horizontal" 
+                                        MouseEnter="InBtn" MouseLeave="OutBtn" 
+                                        MouseDown="ShowMenu"  Background="#00ffffff">
+                                <Image Width="32" Height="32" Source="Images/Tool/menu.png" Margin="9"/>
+                                <TextBlock Text="工具菜单" FontSize="14" Foreground="White" 
+                                            VerticalAlignment="Center" Margin="9"/>
+                            </StackPanel>
                     
-                    <!--三维量算-->
-                    <StackPanel Orientation="Vertical">
-                        <!--一级菜单-->
-                        <StackPanel Orientation="Horizontal" MouseEnter="InBtn" MouseLeave="OutBtn"  
-                                    MouseLeftButtonDown="MeasureClick" Background="#00ffffff"
-                                    x:Name="measureMenu">
-                            <Image Width="32" Height="32" Source="Images/Tool/measure.png" Margin="9"/>
-                            <TextBlock Text="三维量算" FontSize="14" Foreground="White" 
-                                       VerticalAlignment="Center" Margin="9"/>
-                            <Image Width="12" Height="12" Source="Images/Tool/expand.png"/>
-                        </StackPanel>
-                        <!--二级菜单-->
-                        <StackPanel x:Name="measureTool" Orientation="Vertical" Background="#FF0593D3"
-                                    Height="0">
-                            <!--距离量算-->
-                            <StackPanel x:Name="measureDistance" Orientation="Horizontal" MouseEnter="InBtn"
-                                        MouseLeave="OutBtn" Background="#00ffffff"
-                                        MouseLeftButtonDown="MeasureSelect">
-                                <Image Width="20" Height="20" Source="Images/Tool/line.png" 
-                                       Margin="25,10,10,10"/>
-                                <TextBlock Text="距离量算" FontSize="12" Foreground="White" 
+                            <!--三维量算-->
+                            <StackPanel Orientation="Vertical">
+                                <!--一级菜单-->
+                                <StackPanel Orientation="Horizontal" MouseEnter="InBtn" MouseLeave="OutBtn"  
+                                            MouseLeftButtonDown="MeasureClick" Background="#00ffffff"
+                                            x:Name="measureMenu">
+                                    <Image Width="32" Height="32" Source="Images/Tool/measure.png" Margin="9"/>
+                                    <TextBlock Text="三维量算" FontSize="14" Foreground="White" 
+                                               VerticalAlignment="Center" Margin="9"/>
+                                    <Image Width="12" Height="12" Source="Images/Tool/expand.png"/>
+                                </StackPanel>
+                                <!--二级菜单-->
+                                <StackPanel x:Name="measureTool" Orientation="Vertical" Background="#FF0593D3"
+                                            Height="0">
+                                    <!--距离量算-->
+                                    <StackPanel x:Name="measureDistance" Orientation="Horizontal" MouseEnter="InBtn"
+                                                MouseLeave="OutBtn" Background="#00ffffff"
+                                                MouseLeftButtonDown="MeasureSelect">
+                                        <Image Width="20" Height="20" Source="Images/Tool/line.png" 
+                                               Margin="25,10,10,10"/>
+                                        <TextBlock Text="距离量算" FontSize="12" Foreground="White" 
+                                                   VerticalAlignment="Center" Margin="9"/>
+                                    </StackPanel>
+                                    <!--面积量算-->
+                                    <StackPanel x:Name="measureArea" Orientation="Horizontal" MouseEnter="InBtn"
+                                                MouseLeave="OutBtn" Background="#00ffffff"
+                                                MouseLeftButtonDown="MeasureSelect">
+                                        <Image Width="20" Height="20" Source="Images/Tool/area.png" 
+                                               Margin="25,10,10,10"/>
+                                        <TextBlock Text="面积量算" FontSize="12" Foreground="White" 
+                                                   VerticalAlignment="Center" Margin="9"/>
+                                    </StackPanel>
+                                    <!--结束量算-->
+                                    <StackPanel Orientation="Horizontal" MouseEnter="InBtn"
+                                                MouseLeave="OutBtn" Background="#00ffffff"
+                                                MouseLeftButtonDown="MeasureSelect">
+                                        <Image Width="20" Height="20" Source="Images/Tool/end.png" 
+                                               Margin="25,10,10,10"/>
+                                        <TextBlock Text="结束量算" FontSize="12" Foreground="White" 
+                                                   VerticalAlignment="Center" Margin="9"/>
+                                    </StackPanel>
+                                    <!--清除量算结果-->
+                                    <StackPanel Orientation="Horizontal" MouseEnter="InBtn"
+                                                MouseLeave="OutBtn" Background="#00ffffff"
+                                                MouseLeftButtonDown="MeasureSelect">
+                                        <Image Width="20" Height="20" Source="Images/Tool/clear.png" 
+                                               Margin="25,10,10,10"/>
+                                        <TextBlock Text="清除结果" FontSize="12" Foreground="White" 
+                                                   VerticalAlignment="Center" Margin="9"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                    
+                            <!--气泡弹框-->
+                            <StackPanel x:Name="bubble" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff" 
+                                        MouseLeftButtonDown="BubbleShow">
+                                <Image Width="32" Height="32" Source="Images/Tool/bubble.png" Margin="9"/>
+                                <TextBlock Text="气泡弹框" FontSize="14" Foreground="White" 
                                            VerticalAlignment="Center" Margin="9"/>
                             </StackPanel>
-                            <!--面积量算-->
-                            <StackPanel x:Name="measureArea" Orientation="Horizontal" MouseEnter="InBtn"
-                                        MouseLeave="OutBtn" Background="#00ffffff"
-                                        MouseLeftButtonDown="MeasureSelect">
-                                <Image Width="20" Height="20" Source="Images/Tool/area.png" 
-                                       Margin="25,10,10,10"/>
-                                <TextBlock Text="面积量算" FontSize="12" Foreground="White" 
+                    
+                            <!--绘制地标-->
+                            <StackPanel x:Name="location" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff" 
+                                        MouseLeftButtonDown="LocationShow">
+                                <Image Width="32" Height="32" Source="Images/Tool/location.png" Margin="9"/>
+                                <TextBlock Text="绘制地标" FontSize="14" Foreground="White" 
                                            VerticalAlignment="Center" Margin="9"/>
                             </StackPanel>
-                            <!--结束量算-->
-                            <StackPanel Orientation="Horizontal" MouseEnter="InBtn"
-                                        MouseLeave="OutBtn" Background="#00ffffff"
-                                        MouseLeftButtonDown="MeasureSelect">
-                                <Image Width="20" Height="20" Source="Images/Tool/end.png" 
-                                       Margin="25,10,10,10"/>
-                                <TextBlock Text="结束量算" FontSize="12" Foreground="White" 
+                    
+                            <!--绕物旋转-->
+                            <StackPanel x:Name="rotate" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff" 
+                                        MouseLeftButtonDown="Rotate">
+                                <Image Width="32" Height="32" Source="Images/Tool/rotate.png" Margin="9"/>
+                                <TextBlock Text="绕物旋转" FontSize="14" Foreground="White" 
                                            VerticalAlignment="Center" Margin="9"/>
                             </StackPanel>
-                            <!--清除量算结果-->
-                            <StackPanel Orientation="Horizontal" MouseEnter="InBtn"
-                                        MouseLeave="OutBtn" Background="#00ffffff"
-                                        MouseLeftButtonDown="MeasureSelect">
-                                <Image Width="20" Height="20" Source="Images/Tool/clear.png" 
-                                       Margin="25,10,10,10"/>
-                                <TextBlock Text="清除结果" FontSize="12" Foreground="White" 
-                                           VerticalAlignment="Center" Margin="9"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                    
-                    <!--气泡弹框-->
-                    <StackPanel x:Name="bubble" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff" 
-                                MouseLeftButtonDown="BubbleShow">
-                        <Image Width="32" Height="32" Source="Images/Tool/bubble.png" Margin="9"/>
-                        <TextBlock Text="气泡弹框" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
-                    
-                    <!--绘制地标-->
-                    <StackPanel x:Name="location" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff" 
-                                MouseLeftButtonDown="LocationShow">
-                        <Image Width="32" Height="32" Source="Images/Tool/location.png" Margin="9"/>
-                        <TextBlock Text="绘制地标" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
-                    
-                    <!--绕物旋转-->
-                    <StackPanel x:Name="rotate" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff" 
-                                MouseLeftButtonDown="Rotate">
-                        <Image Width="32" Height="32" Source="Images/Tool/rotate.png" Margin="9"/>
-                        <TextBlock Text="绕物旋转" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
                    
-                    <!--显示经纬网-->
-                    <StackPanel x:Name="latlon" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff" 
-                                MouseLeftButtonDown="LatlonShow">
-                        <Image Width="32" Height="32" Source="Images/Tool/latlon.png" Margin="9"/>
-                        <TextBlock Text="经纬网格" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
+                            <!--显示经纬网-->
+                            <StackPanel x:Name="latlon" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff" 
+                                        MouseLeftButtonDown="LatlonShow">
+                                <Image Width="32" Height="32" Source="Images/Tool/latlon.png" Margin="9"/>
+                                <TextBlock Text="经纬网格" FontSize="14" Foreground="White" 
+                                           VerticalAlignment="Center" Margin="9"/>
+                            </StackPanel>
                     
-                    <!--显示帧率-->
-                    <StackPanel x:Name="fps" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff"
-                                MouseLeftButtonDown="FPSShow">
-                        <Image Width="32" Height="32" Source="Images/Tool/fps.png" Margin="9"/>
-                        <TextBlock Text="显示帧率" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
+                            <!--显示帧率-->
+                            <StackPanel x:Name="fps" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff"
+                                        MouseLeftButtonDown="FPSShow">
+                                <Image Width="32" Height="32" Source="Images/Tool/fps.png" Margin="9"/>
+                                <TextBlock Text="显示帧率" FontSize="14" Foreground="White" 
+                                           VerticalAlignment="Center" Margin="9"/>
+                            </StackPanel>
 
-                    <!--我迷路了-->
-                    <StackPanel x:Name="lost" Orientation="Horizontal" MouseEnter="InBtn" 
-                                MouseLeave="OutBtn" Background="#00ffffff"
-                                MouseLeftButtonDown="IMLost">
-                        <Image Width="32" Height="32" Source="Images/Tool/lost.png" Margin="9"/>
-                        <TextBlock Text="我迷路了" FontSize="14" Foreground="White" 
-                                   VerticalAlignment="Center" Margin="9"/>
-                    </StackPanel>
-                </StackPanel>
+                            <!--我迷路了-->
+                            <StackPanel x:Name="lost" Orientation="Horizontal" MouseEnter="InBtn" 
+                                        MouseLeave="OutBtn" Background="#00ffffff"
+                                        MouseLeftButtonDown="IMLost">
+                                <Image Width="32" Height="32" Source="Images/Tool/lost.png" Margin="9"/>
+                                <TextBlock Text="我迷路了" FontSize="14" Foreground="White" 
+                                           VerticalAlignment="Center" Margin="9"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ElementHost>
+                </WindowsFormsHost>
                 <!--左边工具栏结束-->
                 
                 <!--地图显示区-->
-                <WindowsFormsHost x:Name="controlForm" Grid.Column="1"/>
+                <WindowsFormsHost x:Name="controlForm" Grid.Column="1" Grid.ColumnSpan="2"
+                                  Panel.ZIndex="0"/>
 
                 <!--右侧搜索区-->
-                <StackPanel Grid.Column="2" Orientation="Vertical">
+                <StackPanel Grid.Column="3" Orientation="Vertical">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="50"/>
