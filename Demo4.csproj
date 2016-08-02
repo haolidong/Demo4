@@ -210,18 +210,6 @@
     <Resource Include="Images\Tool\lost.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\RightSide\marker.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\RightSide\location.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\RightSide\lo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\RightSide\loc_red.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\RightSide\loc.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

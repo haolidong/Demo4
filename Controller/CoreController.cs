@@ -73,7 +73,7 @@ namespace Demo4.Controller
             WorkspaceConnectionInfo conninfo = new WorkspaceConnectionInfo();
             conninfo.Type = WorkspaceType.SMWU;
             string file =
-                @"E:\super_map\SMO_DotNET_802_13626_55470_CHS_Zip\SampleData\OlympicGreen\OlympicGreen.smwu";
+                @"E:\super_map\SMO_DotNET_802_13626_55470_CHS_Zip\SampleData\oly\OlympicGreen.smwu";
             conninfo.Server = file; // 这里只能是绝对路径（怎么使用相对路径呢？？？）
 
             m_workspace.Open(conninfo);

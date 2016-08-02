@@ -28,7 +28,12 @@ namespace Demo4
         private CoreController m_controller;
         private SceneControl m_sceneControl;
 
-        private Panel m_currentTab;
+        // 当前选中的TabTitle
+        private Panel m_currentTabTitle;
+        private Panel m_currentTabContent;
+        // 当前显示的TabContent
+        private Panel m_anotherTabTitle;
+        private Panel m_anotherTabContent;
 
         private ObservableCollection<Address> results;
 
@@ -64,7 +69,11 @@ namespace Demo4
             this.layer.Child = wt;
 
             // 当前选中的Tab
-            m_currentTab = this.searchTabTitle;
+            m_currentTabTitle = this.searchTabTitle;
+            m_currentTabContent = this.searchTabContent;
+            // 当前未选中的Tab
+            m_anotherTabTitle = this.layerTabTitle;
+            m_anotherTabContent = this.layerTabContent;
         }
 
         /// <summary>
@@ -361,105 +370,80 @@ namespace Demo4
         }
 
         /// <summary>
-        /// 显示搜索Tab
+        /// 切换Tab
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SearchTabShow(object sender, MouseButtonEventArgs e)
+        private void SwitchTab(object sender, MouseButtonEventArgs e)
         {
             // 如果点击当前选中Tab，直接退出
-            if (m_currentTab == sender)
+            if (m_currentTabTitle == sender)
             {
-                MessageBox.Show("Do Nothing");
                 return;
             }
-            m_currentTab = sender as Panel;
 
-            // 更换TabTitle图片
-            Image searchTabImg = (m_currentTab.Children[0] as Panel).Children[0] as Image;
-            Image layerTabImg = (this.layerTabTitle.Children[0] as Panel).Children[0] as Image;
+            // 交换选中与未选中的Tab
+            Panel temp = m_currentTabTitle;
+            m_currentTabTitle = m_anotherTabTitle;
+            m_anotherTabTitle = temp;
+            temp = m_currentTabContent;
+            m_currentTabContent = m_anotherTabContent;
+            m_anotherTabContent = temp;
 
-            BitmapImage searchBi = new BitmapImage();
-            BitmapImage layerBi = new BitmapImage();
-
-            searchBi.BeginInit();
-            searchBi.UriSource = new Uri("Images/RightSide/search_20_b.png", UriKind.Relative);
-            searchBi.EndInit();
-
-            layerBi.BeginInit();
-            layerBi.UriSource = new Uri("Images/RightSide/layer_20.png", UriKind.Relative);
-            layerBi.EndInit();
-
-            searchTabImg.Source = searchBi;
-            layerTabImg.Source = layerBi;
-
-            // 更换TabTitle背景色
-            m_currentTab.Background =
-                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
-            this.layerTabTitle.Background =
-                new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-            // 更换TabTitle文字颜色
-            ((m_currentTab.Children[0] as Panel).Children[1] as TextBlock).Foreground =
-                new SolidColorBrush(Color.FromArgb(255, 5, 147, 211));
-            ((this.layerTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
-                new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
-            // 显示选中的TabContent
-            this.searchTabContent.Visibility = System.Windows.Visibility.Visible;
-            this.layerTabContent.Visibility = System.Windows.Visibility.Hidden;
-           
+            // 切换Tab后配置不同外观
+            TabSetting();
         }
 
         /// <summary>
-        /// 显示图层Tab
+        /// 切换Tab后，配置不同Tab的显示外观
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LayerTabShow(object sender, MouseButtonEventArgs e)
+        private void TabSetting()
         {
-            // 如果点击当前选中Tab，直接退出
-            if (m_currentTab == sender)
-            {
-                MessageBox.Show("Do Nothing");
-                return;
-            }
-            m_currentTab = sender as Panel;
-
-            // 更换TabTitle图片
-            Image searchTabImg = (this.searchTabTitle.Children[0] as Panel).Children[0] as Image;
-            Image layerTabImg = (m_currentTab.Children[0] as Panel).Children[0] as Image;
-
-            BitmapImage searchBi = new BitmapImage();
-            BitmapImage layerBi = new BitmapImage();
-
-            searchBi.BeginInit();
-            searchBi.UriSource = new Uri("Images/RightSide/search_20.png", UriKind.Relative);
-            searchBi.EndInit();
-
-            layerBi.BeginInit();
-            layerBi.UriSource = new Uri("Images/RightSide/layer_20_b.png", UriKind.Relative);
-            layerBi.EndInit();
-
-            searchTabImg.Source = searchBi;
-            layerTabImg.Source = layerBi;
-
             // 更换TabTitle背景色
-            m_currentTab.Background =
+            m_currentTabTitle.Background =
                 new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
-            this.searchTabTitle.Background =
+            m_anotherTabTitle.Background =
                 new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
             // 更换TabTitle文字颜色
-            ((this.searchTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+            ((m_anotherTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
                 new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
-            ((m_currentTab.Children[0] as Panel).Children[1] as TextBlock).Foreground =
+            ((m_currentTabTitle.Children[0] as Panel).Children[1] as TextBlock).Foreground =
                 new SolidColorBrush(Color.FromArgb(255, 5, 147, 211));
-            // 显示选中的TabContent
-            this.searchTabContent.Visibility = System.Windows.Visibility.Hidden;
-            this.layerTabContent.Visibility = System.Windows.Visibility.Visible;
 
+            // 更换TabTitle的图片
+            Image anotherTabImg = (m_anotherTabTitle.Children[0] as Panel).Children[0] as Image;
+            Image currentTabImg = (m_currentTabTitle.Children[0] as Panel).Children[0] as Image;
+            if (m_currentTabTitle == this.searchTabTitle)
+            {
+                currentTabImg.Source = CreateBitmapImage("Images/RightSide/search_20_b.png");
+                anotherTabImg.Source = CreateBitmapImage("Images/RightSide/layer_20.png");
+            }
+            else
+            {
+                currentTabImg.Source = CreateBitmapImage("Images/RightSide/layer_20_b.png");
+                anotherTabImg.Source = CreateBitmapImage("Images/RightSide/search_20.png");
+            }
+
+            // 显示选中的TabContent
+            m_anotherTabContent.Visibility = System.Windows.Visibility.Hidden;
+            m_currentTabContent.Visibility = System.Windows.Visibility.Visible;
         }
 
+        /// <summary>
+        /// 根据相对路径，生成图片对象
+        /// </summary>
+        /// <param name="realPath">图片相对路径</param>
+        /// <returns>生成的BitmapImage对象</returns>
+        private BitmapImage CreateBitmapImage(string realPath)
+        {
+            BitmapImage bi = new BitmapImage();
+            bi.BeginInit();
+            bi.UriSource = new Uri(realPath, UriKind.Relative);
+            bi.EndInit();
+
+            return bi;
+        }
 
     }
 }
