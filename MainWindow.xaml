@@ -64,8 +64,8 @@
                 </Grid.ColumnDefinitions>
                 
                 <!--左边工具栏-->
-                <WindowsFormsHost x:Name="tool" Grid.Column="0" Grid.ColumnSpan="1"
-                                  Panel.ZIndex="1" Background="Transparent">
+                <WindowsFormsHost x:Name="toolbar" Grid.Column="0" Grid.ColumnSpan="1"
+                                  Panel.ZIndex="1">
                     <ElementHost>
                         <StackPanel Background="#CC0593D3" Orientation="Vertical">
                             <!--工具菜单-->

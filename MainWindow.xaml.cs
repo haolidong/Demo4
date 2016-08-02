@@ -79,13 +79,13 @@ namespace Demo4
             //double width = this.toolbar.Width.Value == 50 ? 150 : 50;
             //this.toolbar.Width = new GridLength(width);
 
-            if (Grid.GetColumnSpan(this.tool) == 1)
+            if (Grid.GetColumnSpan(this.toolbar) == 1)
             {
-                Grid.SetColumnSpan(this.tool, 2);
+                Grid.SetColumnSpan(this.toolbar, 2);
             }
             else
             {
-                Grid.SetColumnSpan(this.tool, 1);
+                Grid.SetColumnSpan(this.toolbar, 1);
             }
         }
 
