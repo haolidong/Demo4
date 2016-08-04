@@ -7,6 +7,7 @@ using SuperMap.Data;
 using SuperMap.Realspace;
 using SuperMap.UI;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
@@ -35,7 +36,12 @@ namespace Demo4
         private Panel m_anotherTabTitle;
         private Panel m_anotherTabContent;
 
-        private ObservableCollection<Address> results;
+        // 每页显示结果数
+        private const int PAGESIZE = 7;
+        // 分页器
+        private Pagination m_page;
+
+        private ObservableCollection<Address> m_results;
 
         /// <summary>
         /// 窗体风格设置类，将MainWindow作参数传进去，进而设置窗体风格
@@ -53,9 +59,8 @@ namespace Demo4
             this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
             //m_windowStyle = new WindowSetting.WindowStyle(this);
 
-            // 搜索结果绑定
-            results = new ObservableCollection<Address>();
-            this.searchResult.ItemsSource = results;
+            // 搜索结果
+            m_results = new ObservableCollection<Address>();
 
             // 地图显示控件
             m_sceneControl = new SceneControl();
@@ -252,8 +257,17 @@ namespace Demo4
         /// <param name="e"></param>
         private void SearchAddress(object sender, MouseEventArgs e)
         {
+            if (this.searchText.Text.Equals(""))
+            {
+                return;
+            }
+
+            m_results = m_controller.SearchAddress(this.searchText.Text);
+            this.searchResultCount.Text = m_results.Count.ToString();
+
+            m_page = new Pagination(this.pagination, PAGESIZE, m_results);
             this.searchResult.ItemsSource = null;
-            this.searchResult.ItemsSource = m_controller.SearchAddress(this.searchText.Text);
+            this.searchResult.ItemsSource = m_page.SetCurrent(0);
             this.searchText.Text = "";
         }
 
@@ -443,6 +457,65 @@ namespace Demo4
             bi.EndInit();
 
             return bi;
+        }
+
+        /// <summary>
+        /// 切页
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SwitchPage(object sender, MouseButtonEventArgs e)
+        {
+            TextBlock tb = e.OriginalSource as TextBlock;
+            IEnumerable<Address> results;
+            if (tb.Name.Equals("prePage"))
+            {
+                results = m_page.Previous();
+            }
+            else if (tb.Name.Equals("nextPage"))
+            {
+                results = m_page.Next();
+            }
+            else
+            {
+                int num = Int32.Parse(tb.Text) - 1;
+                results = m_page.SetCurrent(num);
+            }
+
+            if (results != null)
+            {
+                this.searchResult.ItemsSource = null;
+                this.searchResult.ItemsSource = results;
+            }
+        }
+
+        /// <summary>
+        /// 鼠标进入上一页、下一页
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InPage(object sender, MouseEventArgs e)
+        {
+            TextBlock tb = e.OriginalSource as TextBlock;
+            if (!Selectable.GetSelectStatus(tb))
+            {
+                return;
+            }
+
+            tb.Background = new SolidColorBrush(Color.FromArgb(200, 5, 147, 211));
+            tb.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
+        }
+        /// <summary>
+        /// 鼠标移出上一页、下一页
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OutPage(object sender, MouseEventArgs e)
+        {
+            TextBlock tb = e.OriginalSource as TextBlock;
+
+            tb.Foreground = new SolidColorBrush(Color.FromArgb(255, 5, 147, 211));
+            tb.Background = new SolidColorBrush(Color.FromArgb(255, 255, 255, 255));
         }
 
     }

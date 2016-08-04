@@ -291,12 +291,14 @@
                                           Padding="0">
                                     <!--包装搜索结果-->
                                     <StackPanel Orientation="Vertical"  Margin="0, 10, 0, 10">
+                                        <!--显示结果总数-->
                                         <StackPanel Orientation="Horizontal" Margin="4, 0, 0, 10">
                                             <TextBlock Text="共" Foreground="Black"/>
-                                            <TextBlock Text="{Binding Path=Items.Count, ElementName=searchResult}"
-                                                       Margin="5, 0, 5, 0"/>
+                                            <TextBlock x:Name="searchResultCount" 
+                                                       Text="0" Margin="5, 0, 5, 0"/>
                                             <TextBlock Text="条搜索结果" Foreground="Black"/>
                                         </StackPanel>
+                                        <!--展示结果-->
                                         <ListBox x:Name="searchResult" BorderBrush="White" FontSize="14">
                                             <!--包装结果项-->
                                             <ListBox.ItemTemplate>
@@ -329,6 +331,23 @@
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
+                                        
+                                        <!--分页-->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                                    Margin="0, 10, 0, 0" x:Name="pagination"
+                                                    TextBlock.MouseLeftButtonDown="SwitchPage"
+                                                    Visibility="Collapsed">
+                                            <TextBlock x:Name="prePage" Text="上一页" 
+                                                       Padding="8, 5, 8, 5" Foreground="#FF0593D3"
+                                                       MouseEnter="InPage" MouseLeave="OutPage"/>
+                                            <StackPanel x:Name="pageNumber" Orientation="Horizontal">
+                                               
+                                            </StackPanel>
+                                            <TextBlock x:Name="nextPage" Text="下一页" 
+                                                       Padding="8, 5, 8, 5" Foreground="#FF0593D3"
+                                                       MouseEnter="InPage" MouseLeave="OutPage"/>
+                                        </StackPanel>
+                                        
                                     </StackPanel>
                                 </GroupBox>
                             </StackPanel>
